@@ -11,7 +11,7 @@ source "bldr.sh"
 ####################################################################################################
 
 pkg_name="libpng"
-pkg_vers="1.5.10"
+pkg_vers="1.5.12"
 
 pkg_info="PNG is an open, extensible image format with lossless compression."
 
@@ -22,11 +22,11 @@ features, is extensible, and has been extensively tested for over 16 years."
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://prdownloads.sourceforge.net/libpng/$pkg_file?download"
 pkg_opts="configure"
-pkg_uses="m4/latest autoconf/latest automake/latest"
 pkg_reqs="zlib/latest"
-pkg_cflags="-I$BLDR_LOCAL_PATH/system/zlib/latest/include"
-pkg_ldflags="-L$BLDR_LOCAL_PATH/system/zlib/latest/lib"
-pkg_cfg="--with-zlib-prefix=$BLDR_LOCAL_PATH/system/zlib/latest --with-pkgconfigdir=$PKG_CONFIG_PATH"
+pkg_uses="$pkg_reqs"
+pkg_cflags="-I$BLDR_LOCAL_PATH/compression/zlib/latest/include"
+pkg_ldflags="-L$BLDR_LOCAL_PATH/compression/zlib/latest/lib"
+pkg_cfg="--with-zlib-prefix=$BLDR_LOCAL_PATH/compression/zlib/latest --with-pkgconfigdir=$PKG_CONFIG_PATH"
 
 ####################################################################################################
 # build and install pkg as local module

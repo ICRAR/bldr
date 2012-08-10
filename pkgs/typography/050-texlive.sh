@@ -12,7 +12,7 @@ source "bldr.sh"
 
 pkg_ctry="typography"
 pkg_name="texlive"
-pkg_vers="2011"
+pkg_vers="2012"
 
 pkg_info="TeX Live provides a live, up-to-date, TeX document production system."
 
@@ -25,7 +25,7 @@ around the world. "
 pkg_file="install-tl-unx.tar.gz"
 pkg_urls="http://mirror.ctan.org/systems/texlive/tlnet/$pkg_file"
 pkg_opts="configure keep skip-install"
-pkg_uses="m4/latest autoconf/latest automake/latest"
+pkg_uses=""
 pkg_reqs=""
 pkg_cfg=""
 pkg_cflags=""
@@ -81,7 +81,7 @@ function bldr_pkg_compile_method()
     local prefix="$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
     local base="$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name"
 
-    bldr_log_header "Building package '$pkg_name/$pkg_vers'"
+    bldr_log_status "Building package '$pkg_name/$pkg_vers'"
     bldr_log_split
     
     bldr_log_info "Moving to build path: '$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers' ..."
@@ -95,7 +95,7 @@ function bldr_pkg_compile_method()
     echo "#"                                                      >> $profile
     echo "selected_scheme scheme-small"                           >> $profile
     echo "TEXDIR $base/$pkg_vers"                                 >> $profile
-    if [ $BLDR_SYSTEM_IS_OSX -eq 1 ]
+    if [ $BLDR_SYSTEM_IS_OSX == true ]
     then
       echo "binary_universal-darwin 1"                            >> $profile
     fi
