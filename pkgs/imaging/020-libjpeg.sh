@@ -29,9 +29,9 @@ pkg_file="jpegsrc.v8d.tar.gz"
 pkg_urls="http://www.ijg.org/files/$pkg_file"
 pkg_opts="configure"
 pkg_reqs="zlib/latest"
-pkg_uses="m4/latest autoconf/latest automake/latest $pkg_reqs"
-pkg_cflags="-I$BLDR_LOCAL_PATH/system/zlib/latest/include"
-pkg_ldflags="-L$BLDR_LOCAL_PATH/system/zlib/latest/lib"
+pkg_uses="$pkg_reqs"
+pkg_cflags="-I$BLDR_LOCAL_PATH/compression/zlib/latest/include"
+pkg_ldflags="-L$BLDR_LOCAL_PATH/compression/zlib/latest/lib"
 pkg_cfg=""
 
 ####################################################################################################

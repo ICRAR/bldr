@@ -1,5 +1,4 @@
 #!/bin/bash
-
 ####################################################################################################
 ##
 ## License:    The MIT License
@@ -35,6 +34,7 @@ source "bldr.sh"
 ####################################################################################################
 
 usage () {
+  echo "BLDR $BLDR_VERSION_STR                                                  " >&2
   echo "                                                                        " >&2
   echo "NAME                                                                    " >&2
   echo "  bldr build - starts an automated build for a set of BLDR packages     " >&2
@@ -43,48 +43,60 @@ usage () {
   echo "  build.sh [OPTIONS] [pkgs]                                             " >&2
   echo "                                                                        " >&2
   echo "OPTIONS                                                                 " >&2
-  echo "  -c package category (or list of categories) to build                  " >&2
-  echo "  -n package name (or list of names) to build                           " >&2
-  echo "  -h show help (this)                                                   " >&2
+  echo "  -h show help (this).                                                  " >&2
+  echo "  -v use maximum verbosity for log output.                              " >&2
+  echo "  -V report BLDR version.                                               " >&2
+  echo "  -c category of packages to build (use more than once to provide a list of categories)." >&2
+  echo "  -n name of package to build (use more than once to provide a list of names)." >&2
+  echo "  -o options to use for build (use more than once to provide a list of options)." >&2
   echo "                                                                        " >&2
-  echo "EXAMPLE                                                                 " >&2
-  echo "  build.sh -c system                                                    " >&2
+  echo "EXAMPLES                                                                " >&2
+  echo "  build.sh -c graphics -n glew        [ build the 'GLEW' package under the 'graphics' category ] " >&2
+  echo "  build.sh -c internal -c system      [ build all packages under the 'internal' and 'system' categories ] " >&2
+  echo "  build.sh -n m4 -o force-rebuild     [ force a rebuild of any package called 'm4' in any category ] " >&2
   echo "                                                                        " >&2
 }
 
 ####################################################################################################
 
-pkg_ctry=" "
-pkg_name=" "
+pkg_ctry=""
+pkg_name=""
+pkg_opts=""
+pkg_args=""
+pkg_vers=""
+
+####################################################################################################
 
 # translate long options to short
 for arg
 do
     delim=""
     case "$arg" in
-       --help) args="${args}-h ";;
-       --verbose) args="${args}-v ";;
-       --version) args="${args}-V ";;
-       --category) args="${args}-c ";;
-       --name) args="${args}-n ";;
+       --help) pkg_args="${pkg_args}-h ";;
+       --verbose) pkg_args="${pkg_args}-V ";;
+       --version) pkg_args="${pkg_args}-v ";;
+       --category) pkg_args="${pkg_args}-c ";;
+       --name) pkg_args="${pkg_args}-n ";;
+       --options) pkg_args="${pkg_args}-o ";;
        # pass through anything else
        *) [[ "${arg:0:1}" == "-" ]] || delim="\""
-           args="${args}${delim}${arg}${delim} ";;
+           pkg_args="${pkg_args}${delim}${arg}${delim} ";;
     esac
 done
 
 # reset the translated args
-eval set -- $args
+eval set -- $pkg_args
 
 # now we can process with getopt
-while getopts ":hdvVc:n:" opt; do
+while getopts ":hdVc:n:v:o:" opt; do
     case $opt in
-        V)  bldr_echo "BLDR $BLDR_VERSION_STR" && exit 1;;
         h)  usage && exit 1;;
         d)  export BLDR_DEBUG=true;;
-        v)  export BLDR_VERBOSE=true;;
+        V)  export BLDR_VERBOSE=true;;
         c)  pkg_ctry="$pkg_ctry:$OPTARG" ;;
         n)  pkg_name="$pkg_name:$OPTARG" ;;
+        v)  pkg_vers="$pkg_vers:$OPTARG" ;;
+        o)  pkg_opts="$pkg_opts:$OPTARG" ;;
         \?) usage && exit 1;;
         :)  echo "ERROR: '-$OPTARG' requires an argument!  See --help!" && exit 1 ;;
         *)  echo "ERROR: '-$OPTARG' is an unrecognized option! See --help!" && exit 1 ;;
@@ -93,6 +105,6 @@ done
 
 ####################################################################################################
 
-bldr_build_pkgs --category "$pkg_ctry" --name "$pkg_name" $*
+bldr_build_pkgs --category "$pkg_ctry" --name "$pkg_name" --version "$pkg_vers" --options "$pkg_opts" ${pkg_args}
 
 ####################################################################################################

@@ -10,6 +10,7 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
+pkg_ctry="imaging"
 pkg_name="oiio"
 pkg_vers="1.0.8"
 
@@ -20,24 +21,31 @@ There is a particular emphasis on formats and functionality used in professional
 work for film.  OpenImageIO is used extensively in animation and VFX studios all over the world, 
 and is also incorporated into several commercial products."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
+pkg_file="$pkg_name-$pkg_vers.zip"
 pkg_urls="http://nodeload.github.com/OpenImageIO/oiio/zipball/RB-1.0"
 pkg_opts="cmake force-bootstrap"
-pkg_reqs="zlib/latest libpng/latest libjpeg/latest libtiff/latest openjpeg/latest hdf5/latest f3d/latest lcms2/latest"
-pkg_uses="m4/latest autoconf/latest automake/latest $pkg_reqs"
+pkg_reqs=""
+pkg_uses=""
+pkg_reqs=""
+pkg_cflags=""
+pkg_ldflags=""
 
-pkg_cflags="-I$BLDR_LOCAL_PATH/system/zlib/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/imaging/lcms2/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/imaging/libpng/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/imaging/libtiff/latest/include"
+dep_list="compression/zlib internal/bzip2 developer/libxml2"
+dep_list="$dep_list imaging/lcms2 imaging/libpng imaging/libjpeg imaging/libtiff imaging/openjpeg"
+dep_list="$dep_list storage/hdf5 storage/netcdf imaging/field3d"
 
-pkg_ldflags="-L$BLDR_LOCAL_PATH/system/zlib/latest/lib"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/imaging/lcms2/latest/lib"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/imaging/libpng/latest/lib"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/imaging/libtiff/latest/lib"
+for dep_pkg in $dep_list
+do
+     pkg_req_name=$(echo "$dep_pkg" | sed 's/.*\///g' )
+     pkg_reqs="$pkg_reqs $pkg_req_name/latest"
+     pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/$dep_pkg/latest/include"
+     pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/$dep_pkg/latest/lib"
+done
+
+pkg_uses="$pkg_reqs"
 
 pkg_cfg="--disable-dependency-tracking --enable-tiff "
-pkg_cfg="$pkg_cfg Z_CFLAGS=-I$BLDR_LOCAL_PATH/system/zlib/latest/include"
+pkg_cfg="$pkg_cfg Z_CFLAGS=-I$BLDR_LOCAL_PATH/compression/zlib/latest/include"
 pkg_cfg="$pkg_cfg Z_LIBS=-lz"
 pkg_cfg="$pkg_cfg PNG_CFLAGS=-I$BLDR_LOCAL_PATH/imaging/libpng/latest/include"
 pkg_cfg="$pkg_cfg PNG_LIBS=-lpng"
@@ -48,7 +56,7 @@ pkg_cfg="$pkg_cfg TIFF_LIBS=-ltiff"
 # build and install pkg as local module
 ####################################################################################################
 
-bldr_build_pkg --category    "imaging"      \
+bldr_build_pkg --category    "$pkg_ctry"    \
                --name        "$pkg_name"    \
                --version     "$pkg_vers"    \
                --info        "$pkg_info"    \
