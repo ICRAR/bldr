@@ -25,19 +25,31 @@ ILM's main image file format."
 
 pkg_file="$pkg_name-$pkg_vers.zip"
 pkg_urls="http://github.com/openexr/openexr/zipball/v2_beta.1"
-pkg_opts="cmake skip-boot force-serial-build"
-pkg_cfg_path="OpenEXR"
-pkg_reqs=""
+pkg_opts="cmake skip-boot force-serial-build use-base-dir=openexr-openexr-d847d1e"
+pkg_cfg_path="openexr-openexr-d847d1e/OpenEXR"
+pkg_reqs="zlib/latest lcms2/latest ilmbase/latest"
+pkg_uses="$pkg_reqs"
+
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg --category    "$pkg_ctry"    \
+                 --name        "$pkg_name"    \
+                 --version     "$pkg_vers"    \
+                 --requires    "$pkg_reqs"    \
+                 --uses        "$pkg_uses"    \
+                 --options     "$pkg_opts"
+
+####################################################################################################
+
 pkg_cflags=""
 pkg_ldflags=""
 
-dep_list="compression/zlib imaging/lcms2 imaging/ilmbase"
-for dep_pkg in $dep_list
+sub_list="Half IlmThread Imath ImathTest Iex IexMath IexTest"
+for sub_inc in $sub_list
 do
-     pkg_req_name=$(echo "$dep_pkg" | sed 's/.*\///g' )
-     pkg_reqs="$pkg_reqs $pkg_req_name/latest"
-     pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/$dep_pkg/latest/include"
-     pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/$dep_pkg/latest/lib"
+     pkg_cflags="$pkg_cflags:-I$BLDR_BUILD_PATH/imaging/$pkg_name/$pkg_vers/openexr/IlmBase/$sub_inc"
 done
 
 pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/imaging/ilmbase/latest/include/OpenEXR"

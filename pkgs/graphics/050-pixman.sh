@@ -29,36 +29,21 @@ modified under the terms of the MIT license. "
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://cairographics.org/releases/$pkg_file"
 pkg_opts="configure"
+pkg_reqs=""
+pkg_reqs="$pkg_reqs zlib/latest"
+pkg_reqs="$pkg_reqs libxml2/latest"
+pkg_reqs="$pkg_reqs libicu/latest"
+pkg_reqs="$pkg_reqs libiconv/latest"
+pkg_reqs="$pkg_reqs gettext/latest"
+pkg_reqs="$pkg_reqs glib/latest"
+pkg_reqs="$pkg_reqs libpng/latest"
+pkg_reqs="$pkg_reqs pango/latest"
+pkg_uses="$pkg_reqs"
+
 pkg_cfg=""
 pkg_cfg_path=""
-
-pkg_uses=""
-pkg_reqs=""
 pkg_cflags=""
 pkg_ldflags=""
-
-dep_list="compression/zlib text/libicu developer/libxml2"
-dep_list="$dep_list text/gettext developer/glib"
-dep_list="$dep_list imaging/libpng typography/pango"
-
-if [[ $BLDR_SYSTEM_IS_OSX == false ]]; then
-     dep_list="$dep_list text/libiconv"
-fi
-
-for dep_pkg in $dep_list
-do
-     pkg_req_name=$(echo "$dep_pkg" | sed 's/.*\///g' )
-     pkg_reqs="$pkg_reqs $pkg_req_name/latest"
-     pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/$dep_pkg/latest/include"
-     pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/$dep_pkg/latest/lib"
-done
-
-if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
-     pkg_cflags="$pkg_cflags:-I/usr/local/include:-I/usr/include"
-     pkg_ldflags="$pkg_ldflags:-L/usr/local/lib:-L/usr/lib:-lintl"
-fi
-
-pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # build and install pkg as local module

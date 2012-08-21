@@ -31,11 +31,30 @@ feature. "
 pkg_file="$pkg_name-$pkg_vers.tar.xz"
 pkg_urls="http://ftp.gnu.org/gnu/$pkg_name/$pkg_file"
 pkg_opts="configure"
-pkg_reqs=""
-pkg_uses=""
+pkg_reqs="coreutils/latest gettext/latest libiconv/latest"
+pkg_uses="$pkg_reqs"
+
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg --category    "$pkg_ctry"    \
+                 --name        "$pkg_name"    \
+                 --version     "$pkg_vers"    \
+                 --requires    "$pkg_reqs"    \
+                 --uses        "$pkg_uses"    \
+                 --options     "$pkg_opts"
+
+####################################################################################################
+
 pkg_cflags=""
 pkg_ldflags=""
-pkg_cfg="" 
+
+pkg_cfg=""
+pkg_cfg="$pkg_cfg --with-libiconv-prefix=\"$BLDR_LIBICONV_BASE_PATH\""
+pkg_cfg="$pkg_cfg --with-libintl-prefix=\"$BLDR_GETTEXT_BASE_PATH\""
+
+pkg_patch=""
 
 ####################################################################################################
 # build and install pkg as local module

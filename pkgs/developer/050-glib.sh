@@ -22,43 +22,46 @@ utility functions for strings and common data structures."
 pkg_file="$pkg_name-$pkg_vers.tar.xz"
 pkg_urls="http://ftp.gnome.org/pub/GNOME/sources/glib/2.32/$pkg_file"
 pkg_opts="configure"
-pkg_reqs="pkg-config/latest zlib/latest libicu/latest libxml2/latest libffi/latest gettext/latest"
+pkg_reqs=""
+pkg_reqs="$pkg_reqs pkg-config/latest"
+pkg_reqs="$pkg_reqs zlib/latest"
+pkg_reqs="$pkg_reqs bzip2/latest"
+pkg_reqs="$pkg_reqs pcre/latest"
+pkg_reqs="$pkg_reqs libelf/latest"
+pkg_reqs="$pkg_reqs libicu/latest"
+pkg_reqs="$pkg_reqs libxml2/latest"
+pkg_reqs="$pkg_reqs libffi/latest"
+pkg_reqs="$pkg_reqs gettext/latest"
+pkg_reqs="$pkg_reqs libiconv/latest"
+pkg_reqs="$pkg_reqs python/2.7.3"
+pkg_reqs="$pkg_reqs perl/latest"
 pkg_uses="$pkg_reqs"
 
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg --category    "$pkg_ctry"    \
+                 --name        "$pkg_name"    \
+                 --version     "$pkg_vers"    \
+                 --requires    "$pkg_reqs"    \
+                 --uses        "$pkg_uses"    \
+                 --options     "$pkg_opts"
+
+####################################################################################################
+
+pkg_cflags=""
 if [[ $BLDR_SYSTEM_IS_64BIT == true ]]
 then
-  pkg_cflags="-m64"
+     pkg_cflags="-m64"
 fi
 
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/compression/zlib/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/text/libicu/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/developer/libffi/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/text/gettext/latest/include"
-pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/text/gettext/latest/share/gettext"
-
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/compression/zlib/latest/lib:-lz"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/developer/libffi/latest/lib:-lffi"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/text/libicu/latest/lib"
-pkg_ldflags="$pkg_ldflags:-licudata:-licui18n:-licuio:-licule:-liculx:-licutest:-licutu:-licuuc"
-pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/text/gettext/latest/lib:-lasprintf:-lgettextpo"
-
-pkg_cfg=""
+pkg_cfg="--sysconfdir=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc"
 pkg_cfg="$pkg_cfg --disable-maintainer-mode"
 pkg_cfg="$pkg_cfg --disable-dependency-tracking"
 pkg_cfg="$pkg_cfg --disable-dtrace" 
-
-if [[ $BLDR_SYSTEM_IS_OSX == true ]]
-then
-     pkg_cfg="$pkg_cfg --with-libiconv-prefix=/usr"
-     pkg_cflags="$pkg_cflags:-I/usr/local/include:-I/usr/include"
-     pkg_ldflags="$pkg_ldflags:-L/usr/local/lib:-L/usr/lib:-lintl"
-else
-     pkg_reqs="$pkg_reqs libiconv/latest"
-     pkg_cfg="$pkg_cfg --with-libiconv=gnu --with-libiconv-prefix=$BLDR_LOCAL_PATH/text/libiconv/latest"
-     pkg_cflags="$pkg_cflags:-I$BLDR_LOCAL_PATH/text/libiconv/latest/include"
-     pkg_ldflags="$pkg_ldflags:-L$BLDR_LOCAL_PATH/text/libiconv/latest/lib"
-fi
-
+pkg_cfg="$pkg_cfg --with-pcre=system"
+pkg_cfg="$pkg_cfg --with-libiconv=native"
 pkg_patch=""
 
 ####################################################################################################
