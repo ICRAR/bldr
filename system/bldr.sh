@@ -48,6 +48,7 @@ BLDR_CATEGORIES=(
     "typography" 
     "graphics" 
     "distributed" 
+    "tracing"
     "storage" 
     "imaging" 
     "databases" 
@@ -588,7 +589,7 @@ fi
 # 
 if [[ $( uname -s | grep -m1 -c -i 'Linux' ) > 0 ]]
 then
-    export BLDR_OS_NAME="lnx"
+    export BLDR_OS_NAME="linux"
     export BLDR_SYSTEM_IS_LINUX=true
 else
     export BLDR_SYSTEM_IS_LINUX=false
@@ -603,6 +604,7 @@ then
     then
         if [[ $(cat /etc/redhat-release | grep -m1 -c -i 'CentOS' ) > 0 ]]
         then
+            export BLDR_OS_NAME="centos"
             export BLDR_SYSTEM_IS_CENTOS=true
         fi
     fi
@@ -614,7 +616,7 @@ fi
 # 
 if [[ $(uname -s | grep -m1 -c -i 'Darwin' ) > 0 ]]
 then
-    export BLDR_OS_NAME="osx"
+    export BLDR_OS_NAME="darwin"
     export BLDR_SYSTEM_IS_OSX=true
 
     if [[ $( uname -v | grep -m1 -c -i 'x86_64') > 0 ]]
@@ -811,7 +813,7 @@ BLDR_BUILD_SEARCH_PATH=". build ../build source src .. ../source ../src"
 BLDR_MAKE_SEARCH_PATH=". build ../build source src .. ../source ../src"
 
 BLDR_BOOT_FILE_SEARCH_LIST="bootstrap bootstrap.sh autogen.sh"
-BLDR_AUTOCONF_FILE_SEARCH_LIST="configure configure.sh config"
+BLDR_AUTOCONF_FILE_SEARCH_LIST="configure configure.sh config Configure"
 BLDR_CMAKE_FILE_SEARCH_LIST="CMakeLists.txt cmakelists.txt"
 BLDR_MAKE_FILE_SEARCH_LIST="Makefile makefile"
 BLDR_MAVEN_FILE_SEARCH_LIST="pom.xml project.xml"
@@ -1579,6 +1581,8 @@ function bldr_list_archive()
         extr=$BLDR_LOCAL_PATH/gtar/latest/bin/tar
     fi
 
+    local base_dir=$(bldr_strip_archive_ext "$archive")
+
     if [[ -f $archive ]]
     then
        case $archive in
@@ -1594,19 +1598,26 @@ function bldr_list_archive()
     fi
 
     local listing=""
-    local base_dir=$(bldr_strip_archive_ext "$archive")
     if [[ $bad_archive == true ]]
     then
         listing="error"
 
+    elif [[ "$result" == "$base_dir" ]]
+    then
+        listing="$base_dir"
+
+    elif [[ $(echo "$result" | grep -m1 -c "^$base_dir/") > 0 ]]
+    then
+        listing="$base_dir"
+
+    elif [[ $(echo "$result" | grep -m1 -c "^./$base_dir/") > 0 ]]
+    then
+        listing="$base_dir"
+
     elif [[ $(echo "$result" | grep -m1 -c "^./") > 0 ]]
     then
-        listing="$base_dir"
-    
-    elif [[ $(echo "$result" | grep -m1 -c "$base_dir/") > 0 ]]
-    then
-        listing="$base_dir"
-    
+        listing=$(echo "$result" | grep -E -o -m1 "^./(\S+)/"  )
+        
     else
         listing=$(echo "$result" | grep -E -o "(\S+)/" | sed 's/\/.*//g' | sort -u )
     fi
@@ -2044,7 +2055,7 @@ function bldr_find_pkg_ctry()
                     pkg_tst_vers="latest"
                 fi
 
-                if [[ $(echo "$pkg_sh" | grep -m1 -c "$pkg_tst_name.sh" ) > 0 ]]
+                if [[ $(echo "$pkg_sh" | grep -m1 -c "[0-9][0-9][0-9]*[0-9]*-$pkg_tst_name.sh") > 0 ]]                    
                 then
                     fnd_ctry="$ctry_name"
                     found_pkg=true
@@ -2158,7 +2169,7 @@ function bldr_has_required_pkg()
                     pkg_tst_vers="latest"
                 fi
 
-                if [[ $(echo "$pkg_sh" | grep -m1 -c "$pkg_tst_name.sh" ) > 0 ]]
+                if [[ $(echo "$pkg_sh" | grep -m1 -c "[0-9][0-9][0-9]*[0-9]*-$pkg_tst_name.sh") > 0 ]]                    
                 then
 
                     local use_existing="false"
@@ -2274,7 +2285,7 @@ function bldr_build_required_pkg()
                     pkg_tst_vers="latest"
                 fi
 
-                if [[ $(echo "$pkg_sh" | grep -m1 -c "$pkg_tst_name.sh" ) > 0 ]]
+                if [[ $(echo "$pkg_sh" | grep -m1 -c "[0-9][0-9][0-9]*[0-9]*-$pkg_tst_name.sh") > 0 ]]                    
                 then
 
                     local use_existing="false"
@@ -2489,12 +2500,21 @@ function bldr_setup_pkg()
 
     if [ -d "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers" ]
     then
-        if [[ $BLDR_VERBOSE == true ]]
+        if [[ $(bldr_has_cfg_option "$pkg_opts" "keep-existing-install" ) == "true" ]]
         then
-            bldr_log_info "Removing stale install '$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers'"
-            bldr_log_split
+            if [[ $BLDR_VERBOSE == true ]]
+            then
+                bldr_log_info "Keeping existing install '$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers'"
+                bldr_log_split
+            fi
+        else
+            if [[ $BLDR_VERBOSE == true ]]
+            then
+                bldr_log_info "Removing stale install '$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers'"
+                bldr_log_split
+            fi
+            bldr_remove_dir "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
         fi
-        bldr_remove_dir "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
     fi
 
     bldr_log_info "Done setting up package '$pkg_name/$pkg_vers'!"
@@ -2615,12 +2635,22 @@ function bldr_fetch_pkg()
         local archive_listing=$(bldr_list_archive "$pkg_file")
         bldr_extract_archive "$pkg_file"
 
-        local move_item=""
+        local base_move="."
         local move_list=$(echo "$archive_listing" | bldr_split_str "\n" )
+        local base_dir=$(bldr_strip_archive_ext "$pkg_file" )
+        if [[ -d $base_dir ]]
+        then 
+            if [[ $(echo "$base_dir" | grep -c -m1 "${move_list[0]}") < 1 ]]
+            then
+                move_list=$base_dir
+            fi
+        fi
+
+        local move_item=""
         for move_item in $move_list
         do
-            bldr_log_info "Moving '$move_item' to '$pkg_name/$pkg_vers' ..."
-            bldr_move_file "$move_item" "$pkg_vers"
+            bldr_log_info "Moving '$base_move/$move_item' to '$pkg_name/$pkg_vers' ..."
+            bldr_move_file "$base_move/$move_item" "$pkg_vers"
         done
 
         bldr_log_split
@@ -2804,12 +2834,13 @@ function bldr_boot_pkg()
 
     bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
     local cfg_path=$(bldr_locate_config_path "$pkg_cfg_path" "$pkg_opts")
+    local cfg_cmd=$(bldr_locate_config_script "$pkg_cfg_path" "$pkg_opts")
     local boot_path=$(bldr_locate_boot_path "$pkg_cfg_path")
     bldr_pop_dir
 
     bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$cfg_path"
     local bootstrap=false
-    if [ ! -x "./configure" ] && [ ! -x "./configure.sh" ] && [ ! -x "./config" ]
+    if [ ! -x "$cfg_cmd" ]
     then
         bootstrap=true
     fi
@@ -3811,9 +3842,12 @@ function bldr_compile_pkg()
         if [ "$pkg_cflags" != "" ] && [ "$pkg_cflags" != " " ]  && [ "$pkg_cflags" != ":" ]
         then
             pkg_cflags=$(echo $pkg_cflags | bldr_split_str ":" | bldr_join_str " ")
-            if [[ $BLDR_SYSTEM_IS_CENTOS == true ]]
+            if [[ $(bldr_has_cfg_option "$pkg_opts" "skip-auto-compile-flags" ) == "false" ]]
             then
-                pkg_cflags="$pkg_cflags -I/usr/include"
+                if [[ $BLDR_SYSTEM_IS_CENTOS == true ]]
+                then
+                    pkg_cflags="$pkg_cflags -I/usr/include"
+                fi
             fi
         else
             pkg_cflags=""
@@ -3841,9 +3875,12 @@ function bldr_compile_pkg()
         if [ "$pkg_ldflags" != "" ] && [ "$pkg_ldflags" != " " ] && [ "$pkg_ldflags" != ":" ]
         then
             pkg_ldflags=$(echo $pkg_ldflags | bldr_split_str ":" | bldr_join_str " ")
-            if [[ $BLDR_SYSTEM_IS_CENTOS == true ]]
+            if [[ $(bldr_has_cfg_option "$pkg_opts" "skip-auto-compile-flags" ) == "false" ]]
             then
-                pkg_ldflags="$pkg_ldflags -L/usr/lib64 -L/usr/lib"
+                if [[ $BLDR_SYSTEM_IS_CENTOS == true ]]
+                then
+                    pkg_ldflags="$pkg_ldflags -L/usr/lib64 -L/usr/lib"
+                fi
             fi
         else
             pkg_ldflags=""
@@ -4154,7 +4191,6 @@ function bldr_migrate_pkg()
 
     local src_path=""
 
-    # build using make if a makefile exists
     if [ -d "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$build_path" ] 
     then
         bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$build_path"
@@ -4177,17 +4213,19 @@ function bldr_migrate_pkg()
         bldr_pop_dir
     fi
 
+    local bt_base="$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+    local bt_path="$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+    if [[ $(echo "$pkg_opts" | grep -m1 -c 'use-build-tree=') > 0 ]]
+    then
+        local user_bt=$(echo $pkg_opts | grep -E -o 'use-build-tree=(\S+)' | sed 's/.*=//g' )
+        if [[ "$user_bt" != "" ]]
+        then
+            bt_path="$bt_path/$user_bt"
+        fi
+    fi   
+
     if [[ $(bldr_has_cfg_option "$pkg_opts" "migrate-build-tree" ) == "true" ]]
     then
-        local bt_path="$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
-        if [[ $(echo "$pkg_opts" | grep -m1 -c 'migrate-build-tree=') > 0 ]]
-        then
-            local user_bt=$(echo $pkg_opts | grep -E -o 'migrate-build-tree=(\S+)' | sed 's/.*=//g' )
-            if [[ "$user_bt" != "" ]]
-            then
-                bt_path="$bt_path/$user_bt"
-            fi
-        fi    
         bldr_make_dir "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
         bldr_copy_dir "$bt_path" "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers" || bldr_bail "Failed to copy shared files into directory: $BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
         bldr_log_split
@@ -4195,8 +4233,23 @@ function bldr_migrate_pkg()
     
     if [[ $(bldr_has_cfg_option "$pkg_opts" "migrate-build-headers" ) == "true" ]]
     then
-        bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+        bldr_push_dir "$bt_base"
         local inc_paths="include inc man share"
+        for src_path in ${inc_paths}
+        do
+            # move product into external path
+            if [ -d "$src_path" ]
+            then
+                bldr_log_status "Migrating build files from '$src_path' for '$pkg_name/$pkg_vers'"
+                bldr_log_split
+                bldr_make_dir "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path"
+                bldr_copy_dir "$src_path" "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path" || bldr_bail "Failed to copy shared files into directory: $BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path"
+                bldr_log_split
+            fi
+        done
+        bldr_pop_dir
+
+        bldr_push_dir "$bt_path"
         for src_path in ${inc_paths}
         do
             # move product into external path
@@ -4214,8 +4267,23 @@ function bldr_migrate_pkg()
 
     if [[ $(bldr_has_cfg_option "$pkg_opts" "migrate-build-source" ) == "true" ]]
     then
-        bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+        bldr_push_dir "$bt_base"
         local inc_paths="src source"
+        for src_path in ${inc_paths}
+        do
+            # move product into external path
+            if [ -d "$src_path" ]
+            then
+                bldr_log_status "Migrating build files from '$src_path' for '$pkg_name/$pkg_vers'"
+                bldr_log_split
+                bldr_make_dir "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path"
+                bldr_copy_dir "$src_path" "$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path" || bldr_bail "Failed to copy shared files into directory: $BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$src_path"
+                bldr_log_split
+            fi
+        done
+        bldr_pop_dir
+
+        bldr_push_dir "$bt_path"
         for src_path in ${inc_paths}
         do
             # move product into external path
@@ -4233,11 +4301,13 @@ function bldr_migrate_pkg()
 
     if [[ $(bldr_has_cfg_option "$pkg_opts" "migrate-build-bin" ) == "true" ]]
     then
-        bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+        bldr_push_dir "$bt_path"
         local bin_paths=". lib bin lib32 lib64 build src"
         local binary=""
         local subdir=""
         local src_path=""
+        local only_bins=$(bldr_has_cfg_option "$pkg_opts" "migrate-skip-libs" )
+
         for src_path in ${bin_paths}
         do
             # move product into external path
@@ -4262,6 +4332,10 @@ function bldr_migrate_pkg()
                     if [[ $(bldr_is_library "$binary") == "true" ]]
                     then
                         subdir="lib"
+                        if [[ $only_bins == "true" ]]
+                        then
+                            continue
+                        fi
                     elif [[ ! -x "$binary" ]]
                     then
                         continue
@@ -4285,7 +4359,7 @@ function bldr_migrate_pkg()
 
     if [[ $(bldr_has_cfg_option "$pkg_opts" "migrate-build-doc" ) == "true" ]]
     then
-        bldr_push_dir "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers"
+        bldr_push_dir "$bt_path"
         local inc_paths="doc man share etc"
         for src_path in ${inc_paths}
         do

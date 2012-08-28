@@ -11,7 +11,7 @@ source "bldr.sh"
 ####################################################################################################
 
 pkg_vers="4.7.1"
-pkg_ver_list=("$pkg_vers" "4.6.3")
+pkg_ver_list=("$pkg_vers")
 pkg_ctry="compilers"
 pkg_name="gcc"
 pkg_info="The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, Ada, and Go, as well as libraries for these languages (libstdc++, libgcj,...)."
@@ -56,7 +56,7 @@ bldr_satisfy_pkg --category    "$pkg_ctry"    \
 
 ####################################################################################################
 
-pkg_cfg=""
+pkg_cfg="--disable-bootstrap"
 pkg_cfg="$pkg_cfg --enable-checking=release"
 pkg_cfg="$pkg_cfg --enable-languages=c,c++,objc,obj-c++,lto"
 pkg_cfg="$pkg_cfg --with-gmp=\"$BLDR_GMP_BASE_PATH\""
@@ -86,13 +86,6 @@ pkg_patch=""
 first_pass=true
 for pkg_vers in "${pkg_ver_list[@]}"
 do
-    if [[ $first_pass == true ]]
-    then
-        pkg_reqs="$pkg_reqs gcc/latest"
-        first_pass=false
-        continue
-    fi
-
     pkg_file="$pkg_name-$pkg_vers.tar.bz2"
     pkg_urls="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/$pkg_name-$pkg_vers/$pkg_file"
     bldr_build_pkg                   \

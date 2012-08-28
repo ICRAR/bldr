@@ -10,49 +10,41 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_ctry="graphics"
-pkg_name="cogl"
-pkg_vers="1.10.2"
+pkg_ctry="network"
+pkg_name="collage"
+pkg_vers="1.4"
+pkg_info="Cross-platform C++ library for building heterogenous, distributed applications "
 
-pkg_info="Cogl is a modern 3D graphics API with associated utility APIs designed to expose the features of 3D graphics hardware using a direct state access API design, as opposed to the state-machine style of OpenGL."
-
-pkg_desc="Cogl is a modern 3D graphics API with associated utility APIs designed to 
-expose the features of 3D graphics hardware using a direct state access API design, 
-as opposed to the state-machine style of OpenGL. It is implemented in the C programming 
-language but we want to provide bindings for everyone's favorite language too."
+pkg_desc="Cross-platform C++ library for building heterogenous, distributed applications."
 
 pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-pkg_urls="http://source.clutter-project.org/sources/cogl/1.10/$pkg_file"
-pkg_opts="configure"
-
-if [[ $BLDR_SYSTEM_IS_OSX == true ]]
-then
-     pkg_opts="$pkg_opts --with-flavour=osx"
-fi
-
-pkg_reqs=""
-pkg_reqs="$pkg_reqs pkg-config/latest"
-pkg_reqs="$pkg_reqs zlib/latest"
-pkg_reqs="$pkg_reqs libxml2/latest"
-pkg_reqs="$pkg_reqs libicu/latest"
-pkg_reqs="$pkg_reqs libiconv/latest"
-pkg_reqs="$pkg_reqs gettext/latest"
-pkg_reqs="$pkg_reqs glib/latest"
-pkg_reqs="$pkg_reqs gtk-doc/latest"
-pkg_reqs="$pkg_reqs pango/latest"
+pkg_urls="git://github.com/Eyescale/Collage.git"
+pkg_opts="cmake"
+pkg_reqs="tar/latest boost/latest lunchbox/latest"
 pkg_uses="$pkg_reqs"
 
-if [[ $BLDR_SYSTEM_IS_OSX == false ]]
-then
-     pkg_reqs="$pkg_reqs libpng/latest"
-fi
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg               \
+  --category    "$pkg_ctry"    \
+  --name        "$pkg_name"    \
+  --version     "$pkg_vers"    \
+  --requires    "$pkg_reqs"    \
+  --uses        "$pkg_uses"    \
+  --options     "$pkg_opts"
+
+####################################################################################################
 
 pkg_cfg=""
-pkg_cfg_path=""
+pkg_cfg="$pkg_cfg:-DBoost_NO_SYSTEM_PATHS=ON"
+pkg_cfg="$pkg_cfg:-DBoost_NO_BOOST_CMAKE=ON"
+pkg_cfg="$pkg_cfg:-DBoost_DIR=\"$BLDR_BOOST_BASE_PATH\""
+pkg_cfg="$pkg_cfg:-DBoost_INCLUDE_DIR=\"$BLDR_BOOST_INCLUDE_PATH\""
+
 pkg_cflags=""
 pkg_ldflags=""
-
-pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # build and install pkg as local module
@@ -71,4 +63,5 @@ bldr_build_pkg --category    "$pkg_ctry"    \
                --cflags      "$pkg_cflags"  \
                --ldflags     "$pkg_ldflags" \
                --config      "$pkg_cfg"
+
 

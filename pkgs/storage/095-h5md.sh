@@ -59,6 +59,7 @@ pkg_cfg="$pkg_cfg:-DHDF5_hdf5_hl_LIBRARY=$BLDR_PHDF5_LIB_PATH/libhdf5_hl.a"
 pkg_cfg="$pkg_cfg:-DHDF5_z_LIBRARY=$BLDR_ZLIB_LIB_PATH/libz.a"
 pkg_cfg="$pkg_cfg:-DHDF5_sz_LIBRARY=$BLDR_SZIP_LIB_PATH/libsz.a"
 pkg_cfg="$pkg_cfg:-DHDF5_ENABLE_PARALLEL=ON"
+pkg_cfg="$pkg_cfg:-DHDF5_BUILD_FORTRAN=OFF"
 pkg_cfg="$pkg_cfg:-DHDF5_ENABLE_ZLIB=ON"
 pkg_cfg="$pkg_cfg:-DHDF5_ENABLE_HL_LIB=ON"
 

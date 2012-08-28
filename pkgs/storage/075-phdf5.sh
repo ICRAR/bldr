@@ -10,7 +10,7 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers="1.8.8"
+pkg_vers="1.8.9"
 pkg_ver_list=("$pkg_vers" "1.8.2" "1.6.10")
 pkg_ctry="storage"
 pkg_name="phdf5"
@@ -30,7 +30,7 @@ The Parallel-HDF5 technology suite includes:
 pkg_file="hdf5-$pkg_vers.tar.gz"
 pkg_urls="http://www.hdfgroup.org/ftp/HDF5/releases/$pkg_name-$pkg_vers/src/$pkg_file"
 pkg_opts="configure disable-xcode-cflags disable-xcode-ldflags"
-pkg_reqs="szip/latest zlib/latest openmpi/1.6"
+pkg_reqs="szip/latest zlib/latest openmpi/1.6 gfortran/latest"
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
@@ -49,20 +49,17 @@ bldr_satisfy_pkg --category    "$pkg_ctry"    \
 pkg_cflags=""
 pkg_ldflags=""
 
-pkg_cfg="--enable-parallel"
+pkg_cfg="CC=mpicc FC=mpif90"
+pkg_cfg="$pkg_cfg --enable-parallel"
+pkg_cfg="$pkg_cfg --enable-fortran"
 pkg_cfg="$pkg_cfg --enable-hl"
 pkg_cfg="$pkg_cfg --enable-filters=all"
+pkg_cfg="$pkg_cfg --enable-static-exec"
+pkg_cfg="$pkg_cfg --with-pthread=\"/usr\""
 
 if [[ $BLDR_SYSTEM_IS_LINUX == true ]]; then
-    pkg_cfg="$pkg_cfg FC=mpif90"
-    pkg_cfg="$pkg_cfg --enable-fortran"
     pkg_cfg="$pkg_cfg --enable-linux-lfs"
-    pkg_cfg="$pkg_cfg --with-pthread=\"/usr\""
-    pkg_cflags="$pkg_cflags:-I/opt/openmpi/1.6/include"
-    pkg_ldflags="$pkg_ldflags:-L/opt/openmpi/1.6/lib"
 else
-    pkg_cfg="$pkg_cfg --enable-static-exec"
-    pkg_cfg="$pkg_cfg --with-pthread=\"/usr\""
 fi
 
 pkg_cfg="$pkg_cfg --with-szlib=\"$BLDR_SZIP_BASE_PATH\""
@@ -187,7 +184,8 @@ do
     #
     # phdf5 - parallel HDF5 w/v1.6 legacy API methods
     #
-    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]; then
+    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]
+    then
 
         pkg_name="phdf5-16"
         pkg_cfg="$hdf5_cfg --with-default-api-version=v16"

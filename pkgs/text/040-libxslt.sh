@@ -28,11 +28,16 @@ in commercial applications (see the docs)."
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://xmlsoft.org/sources/$pkg_file"
 pkg_opts="configure"
-pkg_reqs="libxml2/latest"
-pkg_uses=""
+pkg_reqs="pkg-config/latest coreutils/latest zlib/latest gzip/latest libxml2/latest"
+pkg_uses="$pkg_reqs"
 pkg_cflags=""
 pkg_ldflags=""
 pkg_cfg="" 
+
+if [[ $BLDR_SYSTEM_IS_LINUX == true ]] 
+then
+     pkg_cflags="$pkg_cflags -fPIC"    
+fi
 
 ####################################################################################################
 # build and install pkg as local module

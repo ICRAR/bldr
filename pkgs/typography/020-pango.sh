@@ -50,7 +50,7 @@ found at http://www.gtk.org/."
 pkg_file="$pkg_name-$pkg_vers.tar.xz"
 pkg_urls="http://ftp.gnome.org/pub/GNOME/sources/$pkg_name/1.30/$pkg_file"
 pkg_opts="configure"
-pkg_reqs=""
+pkg_reqs="pkg-config/latest"
 pkg_reqs="$pkg_reqs zlib/latest"
 pkg_reqs="$pkg_reqs libicu/latest"
 pkg_reqs="$pkg_reqs libiconv/latest"
@@ -61,7 +61,23 @@ pkg_reqs="$pkg_reqs gettext/latest"
 pkg_reqs="$pkg_reqs glib/latest"
 pkg_uses="$pkg_reqs"
 
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg --category    "$pkg_ctry"    \
+                 --name        "$pkg_name"    \
+                 --version     "$pkg_vers"    \
+                 --requires    "$pkg_reqs"    \
+                 --uses        "$pkg_uses"    \
+                 --options     "$pkg_opts"
+
+####################################################################################################
+
+pkg_cfg="--enable-static --enable-shared --disable-introspection"
 pkg_cflags=""
+pkg_cflags="$pkg_cflags:-I$BLDR_GLIB_INCLUDE_PATH/glib-2.0"
+pkg_cflags="$pkg_cflags:-I$BLDR_GLIB_INCLUDE_PATH/gio-unix-2.0"
 pkg_ldflags=""
 
 ####################################################################################################

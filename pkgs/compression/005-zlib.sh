@@ -29,11 +29,12 @@ points is available on another page."
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://zlib.net/$pkg_file"
 pkg_opts="configure --enable-shared skip-auto-compile-flags"
-pkg_uses="m4/latest autoconf/latest automake/latest libtool/latest"
+pkg_uses="m4/latest autoconf/latest automake/latest"
 pkg_reqs=""
 pkg_cflags=""
 pkg_ldflags=""
 pkg_cfg="-t"
+
 if [[ $BLDR_SYSTEM_IS_64BIT == true ]]
 then
      pkg_cfg="$pkg_cfg -64"

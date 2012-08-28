@@ -34,9 +34,10 @@ pkg_reqs="$pkg_reqs gtk-doc/latest"
 pkg_reqs="$pkg_reqs gettext/latest"
 pkg_reqs="$pkg_reqs glib/latest"
 pkg_reqs="$pkg_reqs libpng/latest"
+pkg_reqs="$pkg_reqs libtiff/latest"
+pkg_reqs="$pkg_reqs libjpeg/latest"
 pkg_reqs="$pkg_reqs freetype/latest"
 pkg_reqs="$pkg_reqs fontconfig/latest"
-pkg_reqs="$pkg_reqs libjpeg/latest"
 pkg_reqs="$pkg_reqs pixman/latest"
 pkg_reqs="$pkg_reqs poppler/latest"
 if [[ $BLDR_SYSTEM_IS_OSX == false ]]; then
@@ -51,7 +52,8 @@ pkg_ldflags=""
 if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
      pkg_cfg="$pkg_cfg --disable-xlib --enable-quartz --enable-quartz-image"
 else
-     pkg_cfg="$pkg_cfg --enable-drm --enable-directfb --enable-gl --enable-cogl"     
+     pkg_cfg="$pkg_cfg --enable-cogl" 
+     pkg_cflags="$pkg_cflags -fPIC"    
 fi
 
 pkg_uses="$pkg_reqs"

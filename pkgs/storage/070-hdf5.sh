@@ -10,7 +10,7 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers="1.8.8"
+pkg_vers="1.8.9"
 pkg_ver_list=("$pkg_vers" "1.8.2" "1.6.10")
 pkg_ctry="storage"
 pkg_name="hdf5"
@@ -30,7 +30,7 @@ The HDF5 technology suite includes:
 pkg_file="hdf5-$pkg_vers.tar.gz"
 pkg_urls="http://www.hdfgroup.org/ftp/HDF5/releases/$pkg_name-$pkg_vers/src/$pkg_file"
 pkg_opts="configure keep-build-ctry disable-xcode-cflags disable-xcode-ldflags"
-pkg_reqs="szip/latest zlib/latest"
+pkg_reqs="szip/latest zlib/latest gfortran/latest"
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
@@ -166,7 +166,7 @@ do
     #
     pkg_name="hdf5"
     pkg_cfg="$hdf5_cfg --enable-cxx"
-    if [ $BLDR_SYSTEM_IS_OSX == false ]
+    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]
     then
         pkg_cfg="$pkg_cfg FC=gfortran"
         pkg_cfg="$pkg_cfg --enable-fortran"
@@ -190,16 +190,13 @@ do
     #
     # hdf5 - with legacy v1.6 API methods
     #
-    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]; then
-
+    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]
+    then
         pkg_name="hdf5-16"
         pkg_cfg="$hdf5_cfg --enable-cxx"
-        pkg_cfg="$hdf5_cfg --with-default-api-version=v16"
-        if [ $BLDR_SYSTEM_IS_OSX == false ]
-        then
-            pkg_cfg="$pkg_cfg FC=gfortran"
-            pkg_cfg="$pkg_cfg --enable-fortran"
-        fi
+        pkg_cfg="$pkg_cfg --with-default-api-version=v16"
+        pkg_cfg="$pkg_cfg FC=gfortran"
+        pkg_cfg="$pkg_cfg --enable-fortran"
 
         bldr_build_pkg                 \
           --category    "$pkg_ctry"    \
@@ -242,8 +239,8 @@ do
     #
     # hdf5 - threadsafe w/v1.6 API methods
     #
-    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]; then
-
+    if [[ $(echo $pkg_vers | grep -m1 -c '^1.8' ) > 0 ]]
+    then
         pkg_name="hdf5-threadsafe-16"
         pkg_cfg="$hdf5_cfg --enable-threadsafe"
         pkg_cfg="$hdf5_cfg --with-default-api-version=v16"

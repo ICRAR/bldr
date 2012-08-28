@@ -10,7 +10,8 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers_list=("2.5.12" "4.1.0")
+pkg_vers="2.5.12"
+pkg_vers_list=("$pkg_vers")
 pkg_ctry="distributed"
 pkg_name="torque"
 
@@ -60,7 +61,7 @@ then
      bldr_log_status "$pkg_name $pkg_vers is not building on OSX right now.  Skipping ..."
      bldr_log_split
 else
-     for pkg_vers in ${pkg_vers_list}
+     for pkg_vers in "${pkg_ver_list[@]}"
      do
           pkg_file="$pkg_name-$pkg_vers.tar.gz"
           pkg_urls="http://www.adaptivecomputing.com/resources/downloads/torque/$pkg_file"
