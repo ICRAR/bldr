@@ -23,15 +23,39 @@ Haskell, C#, Cocoa, JavaScript, Node.js, Smalltalk, OCaml and Delphi and other l
 
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="https://dist.apache.org/repos/dist/release/$pkg_name/$pkg_vers/$pkg_file"
-pkg_opts="configure force-serial-build -EPYTHONPATH+=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bindings/python/lib/python2.7/site-packages"
-pkg_reqs="bison/latest flex/latest boost/latest openssl/latest libevent/latest python/2.7.3 glib/latest"
+pkg_opts="configure force-serial-build -EPYTHONPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bindings/python/lib/python2.7/site-packages"
+pkg_reqs="pkg-config/latest"
+pkg_reqs="$pkg_reqs bison/latest"
+pkg_reqs="$pkg_reqs flex/latest"
+pkg_reqs="$pkg_reqs boost/latest"
+pkg_reqs="$pkg_reqs openssl/latest"
+pkg_reqs="$pkg_reqs libevent/latest"
+pkg_reqs="$pkg_reqs python/2.7.3"
+pkg_reqs="$pkg_reqs glib/latest"
 pkg_uses="$pkg_reqs"
-pkg_cflags=""
-pkg_ldflags=""
+
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg               \
+  --category    "$pkg_ctry"    \
+  --name        "$pkg_name"    \
+  --version     "$pkg_vers"    \
+  --requires    "$pkg_reqs"    \
+  --uses        "$pkg_uses"    \
+  --options     "$pkg_opts"
+
+####################################################################################################
+
+pkg_cfg=""
+pkg_cflags="-I$BLDR_OPENSSL_INCLUDE_PATH"
+pkg_ldflags="-L$BLDR_OPENSSL_LIB_PATH"
+
 pkg_cfg="--with-c_glib --with-ruby=no --with-php=no --with-erlang=no"
-pkg_cfg="$pkg_cfg --with-boost=$BLDR_LOCAL_PATH/developer/boost/latest"
-pkg_cfg="$pkg_cfg --with-libevent=$BLDR_LOCAL_PATH/system/libevent/latest"
-pkg_cfg="$pkg_cfg --with-zlib=$BLDR_LOCAL_PATH/compression/zlib/latest"
+pkg_cfg="$pkg_cfg --with-boost=\"$BLDR_BOOST_BASE_PATH\""
+pkg_cfg="$pkg_cfg --with-libevent=\"$BLDR_LIBEVENT_BASE_PATH\""
+pkg_cfg="$pkg_cfg --with-zlib=\"$BLDR_ZLIB_BASE_PATH\""
 pkg_cfg="$pkg_cfg PY_PREFIX=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bindings/python"
 pkg_cfg="$pkg_cfg JAVA_PREFIX=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bindings/java"
 pkg_cfg="$pkg_cfg PERL_PREFIX=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bindings/perl"

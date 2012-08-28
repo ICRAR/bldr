@@ -46,7 +46,7 @@ pkg_ldflags=""
 
 pkg_cfg="-DMAKESTATIC=1:-DLINKSTATIC=1"
 pkg_cfg="$pkg_cfg:-DMPI_INCLUDE_PATH=$BLDR_OPENMPI_INCLUDE_PATH"
-pkg_cfg="$pkg_cfg:-H5FD_DSM_BUILD_FORTRAN=ON"                                           
+pkg_cfg="$pkg_cfg:-H5FD_DSM_BUILD_FORTRAN=OFF"                                           
 pkg_cfg="$pkg_cfg:-H5FD_DSM_BUILD_STEERING=ON"
 pkg_cfg="$pkg_cfg:-HDF5_DIR=$BLDR_HDF5_VFD_SHARE_PATH/cmake/hdf5-version"
 

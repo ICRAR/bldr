@@ -37,11 +37,16 @@ fashion. Note that there is currently no known code implementing the latter."
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://snappy.googlecode.com/files/$pkg_file"
 pkg_opts="configure"
-pkg_uses="m4/latest autoconf/latest automake/latest libtool/latest"
+pkg_uses="m4/latest autoconf/latest automake/latest"
 pkg_reqs=""
 pkg_cflags=""
 pkg_ldflags=""
 pkg_cfg=""
+
+if [[ $BLDR_SYSTEM_IS_LINUX == true ]]
+then
+     pkg_cflags="$pkg_cflags -fPIC"
+fi
 
 ####################################################################################################
 # build and install pkg as local module

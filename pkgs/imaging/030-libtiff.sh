@@ -58,6 +58,11 @@ pkg_cfg="$pkg_cfg --with-zlib-include-dir=\"$BLDR_ZLIB_INCLUDE_PATH\""
 pkg_cflags=""
 pkg_ldflags=""
 
+if [[ $BLDR_SYSTEM_IS_LINUX == true ]]
+then
+     pkg_cflags="$pkg_cflags -fPIC"
+fi
+
 ####################################################################################################
 # build and install each pkg version as local module
 ####################################################################################################

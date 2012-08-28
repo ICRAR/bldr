@@ -10,7 +10,8 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers_list=("1.2.76")
+pkg_vers="1.2.76"
+pkg_vers_list=("$pkg_vers")
 pkg_ctry="databases"
 pkg_name="kyoto-cabinet"
 pkg_info="Kyoto Cabinet is a library of routines for managing a database."
@@ -47,7 +48,7 @@ pkg_cfg_path=""
 # build and install each pkg version as local module
 ####################################################################################################
 
-for pkg_vers in ${pkg_vers_list}
+for pkg_vers in "${pkg_ver_list[@]}"
 do
      pkg_file="kyotocabinet-$pkg_vers.tar.gz"
      pkg_opts="configure -MPREFIX=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"

@@ -26,11 +26,11 @@ patterns and returns the nearest matching font."
 pkg_file="$pkg_name-$pkg_vers.tar.gz"
 pkg_urls="http://www.freedesktop.org/software/$pkg_name/release/$pkg_file"
 pkg_opts="configure"
-pkg_reqs="zlib/latest libicu/latest libxml2/latest freetype/latest"
+pkg_reqs="zlib/latest libicu/latest libiconv/latest libxml2/latest freetype/latest"
 pkg_uses="$pkg_reqs"
 pkg_cflags=""
 pkg_ldflags=""
-pkg_cfg=""
+pkg_cfg="--disable-docs"
 pkg_patch=""
 
 if [[ $BLDR_SYSTEM_IS_OSX == true ]]
@@ -40,8 +40,6 @@ then
           pkg_cfg="$pkg_cfg --with-arch=x86_64"
      fi
      pkg_cfg="$pkg_cfg --with-sysroot=$BLDR_OSX_SYSROOT"
-else
-     pkg_reqs="$pkg_reqs libiconv/latest"
 fi
 
 pkg_uses=$pkg_reqs

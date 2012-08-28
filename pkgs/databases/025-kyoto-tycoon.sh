@@ -10,7 +10,8 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers_list=("0.9.56")
+pkg_vers="0.9.56"
+pkg_vers_list=("$pkg_vers")
 pkg_ctry="databases"
 pkg_name="kyoto-tycoon"
 pkg_info="Kyoto Tycoon is a lightweight database server."
@@ -64,7 +65,7 @@ pkg_cfg_path=""
 # build and install each pkg version as local module
 ####################################################################################################
 
-for pkg_vers in ${pkg_vers_list}
+for pkg_vers in "${pkg_ver_list[@]}"
 do
      pkg_file="kyototycoon-$pkg_vers.tar.gz"
      pkg_opts="configure -MPREFIX=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers"

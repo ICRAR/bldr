@@ -50,6 +50,7 @@ pkg_reqs="$pkg_reqs libxml2/latest"
 pkg_reqs="$pkg_reqs libicu/latest"
 pkg_reqs="$pkg_reqs libiconv/latest"
 pkg_reqs="$pkg_reqs gtk-doc/latest"
+pkg_reqs="$pkg_reqs libtool/latest"
 pkg_reqs="$pkg_reqs gettext/latest"
 pkg_reqs="$pkg_reqs glib/latest"
 pkg_reqs="$pkg_reqs libpng/latest"
@@ -58,19 +59,19 @@ pkg_reqs="$pkg_reqs fontconfig/latest"
 pkg_reqs="$pkg_reqs pango/latest"
 pkg_reqs="$pkg_reqs pixman/latest"
 pkg_reqs="$pkg_reqs poppler/latest"
-if [[ $BLDR_SYSTEM_IS_OSX == false ]]; then
-     pkg_reqs="$pkg_reqs cogl/latest"
-fi
 
-pkg_cfg=""
+pkg_cfg="--disable-introspection"
 pkg_cfg_path=""
 pkg_cflags=""
 pkg_ldflags=""
 
 if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
-     pkg_cfg="$pkg_cfg --disable-xlib --enable-quartz --enable-quartz-image"
-else
-     pkg_cfg="$pkg_cfg --enable-drm --enable-directfb --enable-gl --enable-cogl"     
+     pkg_cfg="$pkg_cfg --disable-xlib --enable-quartz --enable-quartz-image --without-x"
+fi
+
+if [[ $BLDR_SYSTEM_IS_LINUX == true ]] 
+then
+     pkg_cflags="$pkg_cflags -fPIC"    
 fi
 
 pkg_uses="$pkg_reqs"
