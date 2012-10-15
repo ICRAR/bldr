@@ -12,7 +12,10 @@ source "bldr.sh"
 
 pkg_ctry="compilers"
 pkg_name="osl"
-pkg_vers="0.8.4"
+
+pkg_default="0.8.4"
+pkg_variants=("0.8.4")
+
 pkg_info="The OpenScop Library (OSL) is a BSD-Licensed implementation of the OpenScop specification data format."
 
 pkg_desc="OpenScop is an open specification defining a file format and a set of data 
@@ -28,50 +31,57 @@ The OpenScop Library, a.k.a. osl, is an example implementation of the specificat
 licensed under the 3-clause BSD licence so developers may feel free to use it in 
 their code (either by linking it or copy-pasting its code)."
 
-osl-0.8.4.tar.gz
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://www.lri.fr/~bastoul/development/openscop/docs/$pkg_file"
-pkg_opts="configure force-bootstrap"
-pkg_reqs="gmp/latest isl/latest zlib/latest"
+pkg_opts="configure force-bootstrap enable-shared enable-static"
+pkg_reqs="gmp isl zlib"
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings
 ####################################################################################################
 
-bldr_satisfy_pkg --category    "$pkg_ctry"    \
-                 --name        "$pkg_name"    \
-                 --version     "$pkg_vers"    \
-                 --requires    "$pkg_reqs"    \
-                 --uses        "$pkg_uses"    \
-                 --options     "$pkg_opts"
+bldr_satisfy_pkg                    \
+    --category    "$pkg_ctry"       \
+    --name        "$pkg_name"       \
+    --version     "$pkg_default"    \
+    --requires    "$pkg_reqs"       \
+    --uses        "$pkg_uses"       \
+    --options     "$pkg_opts"
 
 ####################################################################################################
 
-pkg_cfg=""
-pkg_cfg="$pkg_cfg --with-gmp=\"$BLDR_GMP_PATH\""
-pkg_cfg="$pkg_cfg --with-isl=\"$BLDR_ISL_PATH\""
+pkg_cfg="--with-gmp=\"$BLDR_GMP_PATH\" "
+pkg_cfg+="--with-isl=\"$BLDR_ISL_PATH\" "
 
 pkg_cflags=""
 pkg_ldflags=""
 pkg_patch=""
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --patch       "$pkg_patch"   \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_urls="http://www.lri.fr/~bastoul/development/openscop/docs/$pkg_file"
+
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
 

@@ -30,35 +30,14 @@ export PATH="./scripts:../scripts:./system:../system:$PATH"
 
 ####################################################################################################
 
+# determine abs path
+BLDR_SCRIPT_PATH="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )"
+
 # setup project paths
-BLDR_ABS_PWD="$( cd "$( dirname ".$0" )" && pwd )"
+BLDR_SCRIPT_PATH="$( dirname "$BLDR_SCRIPT_PATH/.." )"
+BLDR_ABS_PWD="$( dirname "$BLDR_SCRIPT_PATH/.." )"
 BLDR_ROOT_PATH="$( dirname "$BLDR_ABS_PWD/.." )"
 BLDR_BASE_PATH="$( basename "$BLDR_ABS_PWD" )"
-
-# try one level up if we aren't resolving the root dir
-if [ ! -f "$BLDR_ROOT_PATH/system/bldr.sh" ]
-then
-    BLDR_ABS_PWD="$( cd "$( dirname ".$0" )/.." && pwd )"
-    BLDR_ROOT_PATH="$( dirname "$BLDR_ABS_PWD/.." )"
-    BLDR_BASE_PATH="$( basename "$BLDR_ABS_PWD" )"
-fi
-
-# try one level up if we aren't resolving the root dir
-if [ ! -f "$BLDR_ROOT_PATH/system/bldr.sh" ]
-then
-    BLDR_ABS_PWD="$( cd "$( dirname ".$0" )/../.." && pwd )"
-    BLDR_ROOT_PATH="$( dirname "$BLDR_ABS_PWD/.." )"
-    BLDR_BASE_PATH="$( basename "$BLDR_ABS_PWD" )"
-fi
-
-####################################################################################################
-
-# ensure we are run inside of the root dir
-if [ ! -f "$BLDR_ROOT_PATH/system/bldr.sh" ]
-then
-    echo "Please execute package build script from within the 'bldr' subfolder: '$BLDR_ABS_PWD' '$BLDR_ROOT_PATH'!"
-    exit 0
-fi 
 
 ####################################################################################################
 
@@ -83,20 +62,6 @@ export BLDR_SYSTEM_IS_LINUX=$( uname -s | grep -m1 -c Linux )
 export BLDR_SYSTEM_IS_OSX=$( uname -s | grep -m1 -c Darwin )
 export BLDR_MODULE_CMD=$(which 'modulecmd')
 
-if [ "$(type -t module)" != "function" ]
-then
-	BLDR_MODULE_CMD_INIT=$(find $BLDR_ROOT_PATH/local/internal/modules/latest/* -depth +2 -type f -iname "bash")
-	if [[ -f "$BLDR_MODULE_CMD_INIT" ]]; then	
-		source "$BLDR_MODULE_CMD_INIT"
-	fi
-	export BLDR_MODULE_CMD=$(which 'modulecmd')
-fi
-
-if [ "$(type -t module)" != "function" ]
-then
-	bldr_bail "Failed to locate module environment!  Exiting!"
-fi	
-
 ####################################################################################################
 
 function bldr_load() 
@@ -113,7 +78,7 @@ function bldr_load()
 
 	if [[ -d "$BLDR_ROOT_PATH/modules/internal" ]]
 	then
-		module load "bldr/latest"	
+		module load "bldr/default"
 	fi
 }
 
@@ -153,6 +118,32 @@ function bldr_unload()
 ####################################################################################################
 # load the local BLDR package repository
 ####################################################################################################
-bldr_load
+
+# ensure we are run inside of the root dir
+if [ ! -f "$BLDR_ROOT_PATH/system/bldr.sh" ]
+then
+    echo "Please execute package build script from within the 'bldr' subfolder: '$BLDR_ROOT_PATH'!"
+
+else
+	
+	if [ "$(type -t module)" != "function" ]
+	then
+		BLDR_MODULE_CMD_INIT=$(find $BLDR_ROOT_PATH/local/internal/modules/default/* -depth +2 -type f -iname "bash")
+		if [[ -f "$BLDR_MODULE_CMD_INIT" ]]; then	
+			source "$BLDR_MODULE_CMD_INIT"
+		fi
+		export BLDR_MODULE_CMD=$(which 'modulecmd')
+	fi
+
+	if [ "$(type -t module)" != "function" ]
+	then
+		bldr_bail "Failed to locate module environment!  Exiting!"
+	fi	
+
+	bldr_load
+fi 
+
+####################################################################################################
+
 
 

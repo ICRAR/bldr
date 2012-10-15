@@ -12,7 +12,11 @@ source "bldr.sh"
 
 pkg_ctry="internal"
 pkg_name="cmake"
-pkg_vers="2.8.9"
+
+pkg_default="2.8.9"
+pkg_variants=("2.6.4" "2.8.9")
+pkg_vers_urls=("http://www.cmake.org/files/v2.6" 
+               "http://www.cmake.org/files/v2.8")
 
 pkg_info="CMake is a family of tools designed to build, test and package software."
 
@@ -21,43 +25,55 @@ CMake is used to control the software compilation process using simple platform
 and compiler independent configuration files. CMake generates native makefiles 
 and workspaces that can be used in the compiler environment of your choice. "
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://www.cmake.org/files/v2.8/$pkg_file"
 pkg_opts="configure force-static force-bootstrap skip-config"
-pkg_uses=""
-pkg_uses="$pkg_uses coreutils/latest"
-pkg_uses="$pkg_uses findutils/latest"
-pkg_uses="$pkg_uses diffutils/latest"
-pkg_uses="$pkg_uses patch/latest"
-pkg_uses="$pkg_uses sed/latest"
-pkg_uses="$pkg_uses grep/latest"
-pkg_uses="$pkg_uses tar/latest"
-pkg_uses="$pkg_uses m4/latest"
-pkg_uses="$pkg_uses autoconf/latest"
-pkg_uses="$pkg_uses automake/latest"
-pkg_uses="$pkg_uses pkg-config/latest"
-pkg_uses="$pkg_uses make/latest"
+
+pkg_uses="coreutils "
+pkg_uses+="findutils "
+pkg_uses+="diffutils "
+pkg_uses+="patch "
+pkg_uses+="sed "
+pkg_uses+="grep "
+pkg_uses+="tar "
+pkg_uses+="m4 "
+pkg_uses+="autoconf "
+pkg_uses+="automake "
+pkg_uses+="pkg-config "
+pkg_uses+="make "
 pkg_reqs="$pkg_uses"
 pkg_cflags=""
 pkg_ldflags=""
 pkg_cfg=""
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"     
+let pkg_idx=0
+for pkg_vers in ${pkg_variants[@]}
+do
+     pkg_file="$pkg_name-$pkg_vers.tar.gz"
+     pkg_host="${pkg_vers_url[$pkg_idx]}"
+     pkg_urls="$pkg_host/$pkg_file"
 
+     bldr_register_pkg                \
+         --category    "$pkg_ctry"    \
+         --name        "$pkg_name"    \
+         --version     "$pkg_vers"    \
+         --default     "$pkg_default" \
+         --info        "$pkg_info"    \
+         --description "$pkg_desc"    \
+         --file        "$pkg_file"    \
+         --url         "$pkg_urls"    \
+         --uses        "$pkg_uses"    \
+         --requires    "$pkg_reqs"    \
+         --options     "$pkg_opts"    \
+         --cflags      "$pkg_cflags"  \
+         --ldflags     "$pkg_ldflags" \
+         --config      "$pkg_cfg"     \
+         --config-path "$pkg_cfg_path"
+
+     let pkg_idx++     
+done
+
+####################################################################################################
 

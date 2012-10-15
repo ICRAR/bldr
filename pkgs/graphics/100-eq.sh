@@ -12,7 +12,10 @@ source "bldr.sh"
 
 pkg_ctry="graphics"
 pkg_name="eq"
-pkg_vers="trunk"
+
+pkg_default="1.4"
+pkg_variants=("1.4")
+pkg_mirrors=("https://github.com/Eyescale/Equalizer/tarball/1.4")
 
 pkg_info="Equalizer is a middleware library used to create and deploy parallel OpenGL-based applications."
 
@@ -23,34 +26,70 @@ the rendering performance, visual quality and display size. An Equalizer applica
 on any visualization system, from a simple workstation to large scale graphics clusters, 
 multi-GPU workstations and Virtual Reality installations"
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="git://github.com/Eyescale/Equalizer.git"
-pkg_opts="cmake"
-pkg_reqs="zlib/latest vmmlib/latest"
-pkg_uses=""
+pkg_opts="cmake force-inplace-build"
+pkg_reqs="zlib vmm lunchbox glew udt "
+# if [[ $BLDR_SYSTEM_IS_LINUX == true ]]; then
+#    $pkg_reqs+="hwloc-gl "
+# fi
+pkg_uses="$pkg_reqs"
+
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg               \
+  --category    "$pkg_ctry"    \
+  --name        "$pkg_name"    \
+  --version     "$pkg_default" \
+  --requires    "$pkg_reqs"    \
+  --uses        "$pkg_uses"    \
+  --options     "$pkg_opts"
+
+####################################################################################################
+
 pkg_cflags=""
 pkg_ldflags=""
 
+export BOOST_ROOT=$BLDR_BOOST_BASE_PATH
+export BOOST_INCLUDEDIR=$BLDR_BOOST_INCLUDE_PATH
+
 pkg_cfg="-DMAKESTATIC=1:-DLINKSTATIC=1"
+pkg_cfg+=":-DBOOST_ROOT=\"$BLDR_BOOST_BASE_PATH\""
+pkg_cfg+=":-DBOOST_INCLUDEDIR=\"$BLDR_BOOST_INCLUDE_PATH\""
+pkg_cfg+=":-DBoost_NO_SYSTEM_PATHS=ON"
+pkg_cfg+=":-DBoost_NO_BOOST_CMAKE=ON"
+pkg_cfg+=":-DBoost_DIR=\"$BLDR_BOOST_BASE_PATH\""
+pkg_cfg+=":-DEQUALIZER_USE_HWLOC=OFF"
+pkg_cfg+=":-DEQUALIZER_BUILD_EXAMPLES=OFF"
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg                 \
-  --category    "$pkg_ctry"    \
-  --name        "$pkg_name"    \
-  --version     "$pkg_vers"    \
-  --info        "$pkg_info"    \
-  --description "$pkg_desc"    \
-  --file        "$pkg_file"    \
-  --url         "$pkg_urls"    \
-  --uses        "$pkg_uses"    \
-  --requires    "$pkg_reqs"    \
-  --options     "$pkg_opts"    \
-  --cflags      "$pkg_cflags"  \
-  --ldflags     "$pkg_ldflags" \
-  --config      "$pkg_cfg"     \
-  --config-path "$pkg_cfg_path"
+let pkg_idx=0
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_urls=${pkg_mirrors[$pkg_idx]}
+    
+    bldr_register_pkg                 \
+         --category    "$pkg_ctry"    \
+         --name        "$pkg_name"    \
+         --version     "$pkg_vers"    \
+         --default     "$pkg_default" \
+         --info        "$pkg_info"    \
+         --description "$pkg_desc"    \
+         --file        "$pkg_file"    \
+         --url         "$pkg_urls"    \
+         --uses        "$pkg_uses"    \
+         --requires    "$pkg_reqs"    \
+         --options     "$pkg_opts"    \
+         --cflags      "$pkg_cflags"  \
+         --ldflags     "$pkg_ldflags" \
+         --config      "$pkg_cfg"     \
+         --config-path "$pkg_cfg_path"
+
+    let pkg_idx++
+done
 
 ####################################################################################################

@@ -12,7 +12,10 @@ source "bldr.sh"
 
 pkg_ctry="compilers"
 pkg_name="cloog"
-pkg_vers="0.17.0"
+
+pkg_default="0.17.0"
+pkg_variants=("0.17.0")
+
 pkg_info="CLooG is a free software and library to generate code for scanning Z-polyhedra."
 
 pkg_desc="CLooG is a free software and library to generate code for scanning Z-polyhedra. 
@@ -30,56 +33,62 @@ like LooPo. Thus it is very 'compilable code oriented' and provides powerful pro
 transformation facilities. Mainly, it allows the user to specify very general schedules, 
 e.g. where unimodularity or invertibility doesn't matter."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://www.bastoul.net/cloog/pages/download/count.php3?url=./$pkg_file"
-pkg_opts="configure force-bootstrap"
+pkg_opts="configure force-bootstrap enable-static enable-shared"
 
-pkg_reqs=""
-pkg_reqs="$pkg_reqs gmp/latest"
-pkg_reqs="$pkg_reqs isl/latest"
-pkg_reqs="$pkg_reqs osl/latest"
-pkg_reqs="$pkg_reqs zlib/latest"
+pkg_reqs="zlib "
+pkg_reqs+="gmp "
+pkg_reqs+="isl "
+pkg_reqs+="osl "
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings
 ####################################################################################################
 
-bldr_satisfy_pkg --category    "$pkg_ctry"    \
-                 --name        "$pkg_name"    \
-                 --version     "$pkg_vers"    \
-                 --requires    "$pkg_reqs"    \
-                 --uses        "$pkg_uses"    \
-                 --options     "$pkg_opts"
+bldr_satisfy_pkg                   \
+  --category    "$pkg_ctry"        \
+  --name        "$pkg_name"        \
+  --version     "$pkg_default"     \
+  --requires    "$pkg_reqs"        \
+  --uses        "$pkg_uses"        \
+  --options     "$pkg_opts"
 
 ####################################################################################################
 
-pkg_cfg=""
-pkg_cfg="$pkg_cfg --with-bits=gmp"
-pkg_cfg="$pkg_cfg --with-gmp=\"$BLDR_GMP_BASE_PATH\""
-pkg_cfg="$pkg_cfg --with-isl=\"$BLDR_ISL_BASE_PATH\""
-pkg_cfg="$pkg_cfg --with-osl=\"$BLDR_OSL_BASE_PATH\""
+pkg_cfg="--with-bits=gmp "
+pkg_cfg+="--with-gmp=\"$BLDR_GMP_BASE_PATH\" "
+pkg_cfg+="--with-isl=\"$BLDR_ISL_BASE_PATH\" "
+pkg_cfg+="--with-osl=\"$BLDR_OSL_BASE_PATH\" "
 
 pkg_cflags=""
 pkg_ldflags=""
 pkg_patch=""
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --patch       "$pkg_patch"   \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_urls="http://www.bastoul.net/cloog/pages/download/count.php3?url=./$pkg_file"
 
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################

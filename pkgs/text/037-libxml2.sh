@@ -12,7 +12,9 @@ source "bldr.sh"
 
 pkg_ctry="text"
 pkg_name="libxml2"
-pkg_vers="2.8.0"
+pkg_default="2.8.0"
+pkg_variants=("2.8.0")
+
 pkg_info="Libxml2 is the XML C parser and toolkit developed for the Gnome project"
 
 pkg_desc="Libxml2 is the XML C parser and toolkit developed for the Gnome project 
@@ -23,12 +25,7 @@ information enclosed between angle brackets. HTML is the most well-known markup
 language. Though the library is written in C a variety of language bindings make 
 it available in other environments."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://xmlsoft.org/sources/$pkg_file"
-pkg_opts="configure"
-pkg_opts="$pkg_opts -EXML_CATALOG_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/catalog\""
-pkg_opts="$pkg_opts -EXML_DOCBOOK_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/docbook\""
-pkg_reqs="pkg-config/latest coreutils/latest zlib/latest gzip/latest xz/latest"
+pkg_reqs="pkg-config coreutils zlib gzip xz"
 pkg_uses="$pkg_reqs"
 pkg_cfg=""
 pkg_cflags=""
@@ -42,6 +39,7 @@ function bldr_pkg_install_method()
       local pkg_ctry=""
       local pkg_name="" 
       local pkg_vers=""
+      local pkg_default=""
       local pkg_info=""
       local pkg_desc=""
       local pkg_file=""
@@ -59,6 +57,7 @@ function bldr_pkg_install_method()
             --verbose)       use_verbose="$2"; shift 2;;
             --name)          pkg_name="$2"; shift 2;;
             --version)       pkg_vers="$2"; shift 2;;
+            --default)       pkg_default="$2"; shift 2;;
             --info)          pkg_info="$2"; shift 2;;
             --description)   pkg_desc="$2"; shift 2;;
             --category)      pkg_ctry="$2"; shift 2;;
@@ -89,6 +88,7 @@ function bldr_pkg_install_method()
           --category    "$pkg_ctry"    \
           --name        "$pkg_name"    \
           --version     "$pkg_vers"    \
+          --default     "$pkg_default"\
           --info        "$pkg_info"    \
           --description "$pkg_desc"    \
           --file        "$pkg_file"    \
@@ -114,24 +114,35 @@ function bldr_pkg_install_method()
       bldr_pop_dir
 }
 
+####################################################################################################
+# register each pkg version with bldr
+####################################################################################################
+
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_urls="http://xmlsoft.org/sources/$pkg_file"
+
+    pkg_opts="configure"
+    pkg_opts+=" -EXML_CATALOG_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/catalog\""
+    pkg_opts+=" -EXML_DOCBOOK_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/docbook\""
+
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default"\
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
 
 ####################################################################################################
-# build and install pkg as local module
-####################################################################################################
-
-bldr_build_pkg                   \
-    --category    "$pkg_ctry"    \
-    --name        "$pkg_name"    \
-    --version     "$pkg_vers"    \
-    --info        "$pkg_info"    \
-    --description "$pkg_desc"    \
-    --file        "$pkg_file"    \
-    --url         "$pkg_urls"    \
-    --uses        "$pkg_uses"    \
-    --requires    "$pkg_reqs"    \
-    --options     "$pkg_opts"    \
-    --cflags      "$pkg_cflags"  \
-    --ldflags     "$pkg_ldflags" \
-    --config      "$pkg_cfg"
-
-
