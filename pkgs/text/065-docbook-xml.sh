@@ -12,7 +12,10 @@ source "bldr.sh"
 
 pkg_ctry="text"
 pkg_name="docbook-xml"
-pkg_vers="4.5"
+
+pkg_default="4.5"
+pkg_variants=("4.5")
+
 pkg_info="The DocBook XML DTD-4.5 package contains document type definitions for verification of XML data files against the DocBook rule set."
 
 pkg_desc="The DocBook XML DTD-4.5 package contains document type definitions for verification 
@@ -20,15 +23,20 @@ of XML data files against the DocBook rule set. These are useful for structuring
 and software documentation to a standard allowing you to utilize transformations already 
 written for that standard."
 
-pkg_file="$pkg_name-$pkg_vers.zip"
-pkg_urls="http://www.docbook.org/xml/$pkg_vers/$pkg_file"
-pkg_opts="configure skip-compile skip-boot skip-config"
-pkg_reqs="pkg-config/latest coreutils/latest zlib/latest gzip/latest libxml2/latest"
+pkg_opts="configure "
+pkg_opts+="skip-compile "
+pkg_opts+="skip-boot "
+pkg_opts+="skip-config "
+
+pkg_reqs="pkg-config "
+pkg_reqs+="coreutils "
+pkg_reqs+="zlib "
+pkg_reqs+="gzip "
+pkg_reqs+="libxml2 "
 pkg_uses="$pkg_reqs"
+
 pkg_cflags=""
 pkg_ldflags=""
-pkg_cfg=""
-pkg_patch=""
 
 ####################################################################################################
 
@@ -121,22 +129,32 @@ function bldr_pkg_install_method()
 }
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg                    \
-     --category    "$pkg_ctry"    \
-     --name        "$pkg_name"    \
-     --version     "$pkg_vers"    \
-     --info        "$pkg_info"    \
-     --description "$pkg_desc"    \
-     --file        "$pkg_file"    \
-     --url         "$pkg_urls"    \
-     --uses        "$pkg_uses"    \
-     --requires    "$pkg_reqs"    \
-     --options     "$pkg_opts"    \
-     --patch       "$pkg_patch"   \
-     --cflags      "$pkg_cflags"  \
-     --ldflags     "$pkg_ldflags" \
-     --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.zip"
+    pkg_urls="http://www.docbook.org/xml/$pkg_vers/$pkg_file"
+
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
+
 

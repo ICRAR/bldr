@@ -12,7 +12,6 @@ source "bldr.sh"
 
 pkg_ctry="typography"
 pkg_name="texlive"
-pkg_vers="2012"
 
 pkg_info="TeX Live provides a live, up-to-date, TeX document production system."
 
@@ -22,27 +21,17 @@ GNU/Linux, and also Windows. It includes all the major TeX-related programs, mac
 packages, and fonts that are free software, including support for many languages 
 around the world. "
 
-pkg_file="install-tl-unx.tar.gz"
-pkg_urls="http://mirror.ctan.org/systems/texlive/tlnet/$pkg_file"
-pkg_opts="configure keep skip-install"
+pkg_default="2012"
+pkg_variants=("2012")
+pkg_distribs=("install-tl-unx.tar.gz")
+pkg_mirrors=("http://mirror.ctan.org/systems/texlive/tlnet")
 
-if [[ $BLDR_SYSTEM_IS_OSX == true ]]
-then
-  pkg_opts="$pkg_opts -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/universal-darwin"
+txl_opts="configure keep skip-install"
+pkg_reqs="pkg-config"
 
-elif [[ $BLDR_SYSTEM_IS_LINUX == true ]]
-then
-  if [[ $BLDR_SYSTEM_IS_64BIT == true ]]
-  then
-    pkg_opts="$pkg_opts -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/x86_64-linux"
-  else
-    pkg_opts="$pkg_opts -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/i386-linux"
-  fi
-fi
-
-pkg_reqs="pkg-config/latest"
 pkg_uses=""
 pkg_reqs=""
+
 pkg_cfg=""
 pkg_cflags=""
 pkg_ldflags=""
@@ -72,6 +61,7 @@ function bldr_pkg_compile_method()
            --verbose)       use_verbose="$2"; shift 2;;
            --name)          pkg_name="$2"; shift 2;;
            --version)       pkg_vers="$2"; shift 2;;
+           --default)       pkg_default="$2"; shift 2;;
            --info)          pkg_info="$2"; shift 2;;
            --description)   pkg_desc="$2"; shift 2;;
            --category)      pkg_ctry="$2"; shift 2;;
@@ -136,23 +126,50 @@ function bldr_pkg_compile_method()
     bldr_pop_dir
 }
 
+####################################################################################################
+# register each pkg version with bldr
+####################################################################################################
+
+let pkg_idx=0
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_host=${pkg_mirrors[$pkg_idx]}
+    pkg_file=${pkg_distribs[$pkg_idx]}
+    pkg_urls="$pkg_host/$pkg_file"
+
+    pkg_opts=txl_opts
+    if [[ $BLDR_SYSTEM_IS_OSX == true ]]
+    then
+      pkg_opts+=" -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/universal-darwin "
+
+    elif [[ $BLDR_SYSTEM_IS_LINUX == true ]]
+    then
+      if [[ $BLDR_SYSTEM_IS_64BIT == true ]]
+      then
+        pkg_opts+=" -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/x86_64-linux "
+      else
+        pkg_opts+=" -EPATH+=$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/bin/i386-linux "
+      fi
+    fi
+
+    bldr_register_pkg                  \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default"\
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
+
+    let pkg_idx++
+done
 
 ####################################################################################################
-# build and install pkg as local module
-####################################################################################################
-
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
-
-

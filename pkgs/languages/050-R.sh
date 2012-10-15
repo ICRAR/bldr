@@ -10,10 +10,11 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers="2.15.1"
-pkg_ver_list=("$pkg_vers")
 pkg_ctry="languages"
 pkg_name="R"
+
+pkg_default="2.15.1"
+pkg_variants=("2.15.1")
 
 pkg_info="R is a free software environment for statistical computing and graphics."
 
@@ -41,75 +42,82 @@ It has developed rapidly, and has been extended by a large collection of package
 However, most programs written in R are essentially ephemeral, written for a single 
 piece of data analysis."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://cran.ms.unimelb.edu.au/src/base/R-2/$pkg_file"
-pkg_opts="configure"
-pkg_reqs="$pkg_reqs zlib/latest"
-pkg_reqs="$pkg_reqs bzip2/latest"
-pkg_reqs="$pkg_reqs tcl/latest"
-pkg_reqs="$pkg_reqs tk/latest"
-pkg_reqs="$pkg_reqs pcre/latest"
-pkg_reqs="$pkg_reqs gettext/latest"
-pkg_reqs="$pkg_reqs libiconv/latest"
-pkg_reqs="$pkg_reqs libicu/latest"
-pkg_reqs="$pkg_reqs libpng/latest"
-pkg_reqs="$pkg_reqs libjpeg/latest"
-pkg_reqs="$pkg_reqs gsl/latest"
-pkg_reqs="$pkg_reqs cairo/latest"
-pkg_reqs="$pkg_reqs gfortran/latest"
-pkg_reqs="$pkg_reqs lapack/latest"
+pkg_opts="configure "
+pkg_opts+="enable-static "
+pkg_opts+="enable-shared "
+
+pkg_reqs+="zlib "
+pkg_reqs+="bzip2 "
+pkg_reqs+="tcl "
+pkg_reqs+="tk "
+pkg_reqs+="pcre "
+pkg_reqs+="gettext "
+pkg_reqs+="libiconv "
+pkg_reqs+="libicu "
+pkg_reqs+="libpng "
+pkg_reqs+="libjpeg "
+pkg_reqs+="gsl "
+pkg_reqs+="cairo "
+pkg_reqs+="gfortran "
+pkg_reqs+="lapack "
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings
 ####################################################################################################
 
-bldr_satisfy_pkg --category    "$pkg_ctry"    \
-                 --name        "$pkg_name"    \
-                 --version     "$pkg_vers"    \
-                 --requires    "$pkg_reqs"    \
-                 --uses        "$pkg_uses"    \
-                 --options     "$pkg_opts"
+bldr_satisfy_pkg                 \
+    --category    "$pkg_ctry"    \
+    --name        "$pkg_name"    \
+    --version     "$pkg_default" \
+    --requires    "$pkg_reqs"    \
+    --uses        "$pkg_uses"    \
+    --options     "$pkg_opts"
 
 ####################################################################################################
 
-pkg_cfg="$pkg_cfg --with-system-zlib"
-pkg_cfg="$pkg_cfg --with-system-bzlib"
-pkg_cfg="$pkg_cfg --with-system-xz"
-pkg_cfg="$pkg_cfg --with-system-pcre"
-pkg_cfg="$pkg_cfg --with-jpeglib"
-pkg_cfg="$pkg_cfg --with-libpng"
-pkg_cfg="$pkg_cfg --with-blas"
-pkg_cfg="$pkg_cfg --with-lapack"
-pkg_cfg="$pkg_cfg --with-ICU"
-pkg_cfg="$pkg_cfg --with-tcltk"
-pkg_cfg="$pkg_cfg --disable-R-framework"
-pkg_cfg="$pkg_cfg --without-aqua"
-pkg_cfg="$pkg_cfg --with-libintl-prefix=\"$BLDR_GETTEXT_BASE_PATH\""
-pkg_cfg="$pkg_cfg --with-cairo=\"$BLDR_CAIRO_BASE_PATH\""
-pkg_cfg="$pkg_cfg --with-tcl-config=\"$BLDR_TCL_BASE_PATH\""
-pkg_cfg="$pkg_cfg --with-tk-config=\"$BLDR_TK_BASE_PATH\""
+pkg_cfg="--with-system-zlib "
+pkg_cfg+="--with-system-bzlib "
+pkg_cfg+="--with-system-xz "
+pkg_cfg+="--with-system-pcre "
+pkg_cfg+="--with-jpeglib "
+pkg_cfg+="--with-libpng "
+pkg_cfg+="--with-blas "
+pkg_cfg+="--with-lapack "
+pkg_cfg+="--with-ICU "
+pkg_cfg+="--with-tcltk "
+pkg_cfg+="--disable-R-framework "
+pkg_cfg+="--without-aqua "
+pkg_cfg+="--with-libintl-prefix=\"$BLDR_GETTEXT_BASE_PATH\" "
+pkg_cfg+="--with-cairo=\"$BLDR_CAIRO_BASE_PATH\" "
+pkg_cfg+="--with-tcl-config=\"$BLDR_TCL_BASE_PATH\" "
+pkg_cfg+="--with-tk-config=\"$BLDR_TK_BASE_PATH\" "
 
 ####################################################################################################
-# build and install each pkg version as local module
+# build and install pkg as local module
 ####################################################################################################
 
-for pkg_vers in ${pkg_ver_list}
+for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
     pkg_urls="http://cran.ms.unimelb.edu.au/src/base/R-2/$pkg_file"
 
-    bldr_build_pkg --category    "$pkg_ctry"    \
-                   --name        "$pkg_name"    \
-                   --version     "$pkg_vers"    \
-                   --info        "$pkg_info"    \
-                   --description "$pkg_desc"    \
-                   --file        "$pkg_file"    \
-                   --url         "$pkg_urls"    \
-                   --uses        "$pkg_uses"    \
-                   --requires    "$pkg_reqs"    \
-                   --options     "$pkg_opts"    \
-                   --cflags      "$pkg_cflags"  \
-                   --ldflags     "$pkg_ldflags" \
-                   --config      "$pkg_cfg"
+    bldr_register_pkg                  \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default" \
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
 done
+
+####################################################################################################

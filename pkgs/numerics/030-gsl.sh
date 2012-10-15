@@ -12,7 +12,9 @@ source "bldr.sh"
 
 pkg_ctry="numerics"
 pkg_name="gsl"
-pkg_vers="1.15"
+
+pkg_default="1.15"
+pkg_variants=("1.15")
 
 pkg_info="The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers."
 
@@ -21,11 +23,11 @@ It is free software under the GNU General Public License. The library provides a
 mathematical routines such as random number generators, special functions and least-squares 
 fitting. There are over 1000 functions in total with an extensive test suite."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://ftp.gnu.org/gnu/gsl/$pkg_file"
-pkg_opts="configure"
+pkg_opts="configure enable-static enable-shared"
+
 pkg_uses=""
 pkg_reqs=""
+
 pkg_cfg=""
 pkg_cflags=""
 pkg_ldflags=""
@@ -107,17 +109,8 @@ function bldr_pkg_compile_method()
         ln -sv "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers" "$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers/gsl"
         bldr_log_split
         
-        bldr_log_cmd "make $options PREFIX="$prefix""
+        bldr_run_cmd "make $options PREFIX="$prefix""
         bldr_log_split
-
-        if [ $BLDR_VERBOSE != false ]
-        then
-            eval make $options PREFIX="$prefix" || bldr_bail "Failed to install package: '$prefix'"
-            bldr_log_split
-        else
-            eval make $options PREFIX="$prefix" &> /dev/null || bldr_bail "Failed to install package: '$prefix'"
-            bldr_log_split
-        fi
     fi
     bldr_pop_dir
 }
@@ -126,18 +119,28 @@ function bldr_pkg_compile_method()
 # build and install pkg as local module
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_urls="http://ftp.gnu.org/gnu/gsl/$pkg_file"
 
+    bldr_register_pkg                  \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default" \
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
 

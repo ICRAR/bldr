@@ -12,7 +12,11 @@ source "bldr.sh"
 
 pkg_ctry="compression"
 pkg_name="7zip"
-pkg_vers="9.20"
+
+pkg_default="9.20"
+pkg_variants=("9.20")
+pkg_distribs=("7z920.tar.bz2")
+pkg_mirrors=("http://downloads.sourceforge.net/sevenzip/7z920.tar.bz2")
 
 pkg_info="7-Zip is a file archiver with a high compression ratio."
 
@@ -41,33 +45,48 @@ The unRAR code is under a mixed license: GNU LGPL + unRAR restrictions.
 You can use 7-Zip on any computer, including a computer in a commercial organization. 
 You don't need to register or pay for 7-Zip."
 
-pkg_file="7z920.tar.bz2"
-pkg_urls="http://downloads.sourceforge.net/sevenzip/$pkg_file"
-pkg_opts="configure"
+
+pkg_opts="configure "
+pkg_opts+="enable-static "
+pkg_opts+="enable-shared" 
+
 pkg_uses=""
 pkg_reqs=""
+
 pkg_cflags=""
 pkg_ldflags=""
+
 pkg_cfg=""
 pkg_cfg_path=""
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"     \
-               --config-path "$pkg_cfg_src"
+let pkg_idx=0
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file=${pkg_distribs[$pkg_idx]}
+    pkg_urls=${pkg_mirrors[$pkg_idx]}
 
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
 
+    let pkg_idx++
+done
+
+####################################################################################################

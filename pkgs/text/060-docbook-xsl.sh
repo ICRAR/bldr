@@ -12,7 +12,10 @@ source "bldr.sh"
 
 pkg_ctry="text"
 pkg_name="docbook-xsl"
-pkg_vers="1.77.1"
+
+pkg_default="1.77.1"
+pkg_variants=("1.77.1")
+
 pkg_info="DocBook is an XML vocabulary that lets you create documents in a presentation-neutral form that captures the logical structure of your content."
 
 pkg_desc="DocBook is an XML vocabulary that lets you create documents in a 
@@ -21,13 +24,21 @@ presentation-neutral form that captures the logical structure of your content.
 Using free tools along with the DocBook XSL stylesheets, you can publish your 
 content as HTML pages and PDF files, and in many other formats."
 
-pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-pkg_urls="http://downloads.sourceforge.net/project/docbook/$pkg_name/$pkg_vers/$pkg_file"
-pkg_opts="configure skip-compile skip-boot skip-config"
-pkg_reqs="pkg-config/latest coreutils/latest zlib/latest gzip/latest libxml2/latest"
+pkg_opts="configure "
+pkg_opts+="skip-compile "
+pkg_opts+="skip-boot "
+pkg_opts+="skip-config "
+
+pkg_reqs="pkg-config "
+pkg_reqs+="coreutils "
+pkg_reqs+="zlib "
+pkg_reqs+="gzip "
+pkg_reqs+="libxml2 "
 pkg_uses="$pkg_reqs"
+
 pkg_cflags=""
 pkg_ldflags=""
+
 pkg_cfg=""
 pkg_patch=""
 
@@ -39,6 +50,7 @@ function bldr_pkg_install_method()
      local pkg_ctry=""
      local pkg_name="" 
      local pkg_vers=""
+     local pkg_default=""
      local pkg_info=""
      local pkg_desc=""
      local pkg_file=""
@@ -56,6 +68,7 @@ function bldr_pkg_install_method()
                --verbose)       use_verbose="$2"; shift 2;;
                --name)          pkg_name="$2"; shift 2;;
                --version)       pkg_vers="$2"; shift 2;;
+               --default)       pkg_default="$2"; shift 2;;
                --info)          pkg_info="$2"; shift 2;;
                --description)   pkg_desc="$2"; shift 2;;
                --category)      pkg_ctry="$2"; shift 2;;
@@ -109,22 +122,32 @@ function bldr_pkg_install_method()
 }
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg                    \
-     --category    "$pkg_ctry"    \
-     --name        "$pkg_name"    \
-     --version     "$pkg_vers"    \
-     --info        "$pkg_info"    \
-     --description "$pkg_desc"    \
-     --file        "$pkg_file"    \
-     --url         "$pkg_urls"    \
-     --uses        "$pkg_uses"    \
-     --requires    "$pkg_reqs"    \
-     --options     "$pkg_opts"    \
-     --patch       "$pkg_patch"   \
-     --cflags      "$pkg_cflags"  \
-     --ldflags     "$pkg_ldflags" \
-     --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name-$pkg_vers.tar.bz2"
+    pkg_urls="http://downloads.sourceforge.net/project/docbook/$pkg_name/$pkg_vers/$pkg_file"
+
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
+
 

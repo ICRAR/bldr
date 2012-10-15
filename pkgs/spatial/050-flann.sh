@@ -12,7 +12,9 @@ source "bldr.sh"
 
 pkg_ctry="spatial"
 pkg_name="flann"
-pkg_vers="1.7.x"
+
+pkg_default="trunk"
+pkg_variants=("trunk")
 
 pkg_info="FLANN is a library for performing fast approximate nearest neighbor searches in high dimensional spaces."
 
@@ -22,31 +24,41 @@ nearest neighbor search and a system for automatically choosing the best algorit
 optimum parameters depending on the dataset. FLANN is written in C++ and contains bindings 
 for the following languages: C, MATLAB and Python."
 
-pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-pkg_urls="git://github.com/mariusmuja/flann.git"
 pkg_opts="cmake"
-pkg_uses="python/2.7.3"
+pkg_uses="python"
 pkg_reqs="$pkg_reqs"
+
 pkg_cfg="-DBUILD_MATLAB_BINDINGS=OFF"
+
 pkg_cflags=""
 pkg_ldflags=""
+pkg_cfg_path="build"
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg --category    "$pkg_ctry"    \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+     pkg_file="$pkg_name-$pkg_vers-$BLDR_TIMESTAMP.tar.bz2"
+     pkg_urls="git://github.com/mariusmuja/flann.git"
 
+     bldr_register_pkg                 \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default" \
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
+done
 
+####################################################################################################

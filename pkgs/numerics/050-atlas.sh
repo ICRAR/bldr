@@ -12,7 +12,9 @@ source "bldr.sh"
 
 pkg_ctry="numerics"
 pkg_name="atlas"
-pkg_vers="3.10.0"
+
+pkg_default="3.10.0"
+pkg_variants=("3.10.0")
 
 pkg_info="ATLAS provides highly optimized Linear Algebra kernels for arbitrary cache-based architectures."
 
@@ -20,12 +22,26 @@ pkg_desc="ATLAS (Automatically Tuned Linear Algebra Software) provides highly op
 Linear Algebra kernels for arbitrary cache-based architectures. ATLAS provides ANSI C 
 and Fortran77 interfaces for the entire BLAS API, and a small portion of the LAPACK API."
 
-pkg_file="$pkg_name$pkg_vers.tar.bz2"
-pkg_urls="http://downloads.sourceforge.net/project/math-atlas/Stable/$pkg_vers/$pkg_file?use_mirror=aarnet"
-pkg_opts="configure use-build-dir disable-xcode-cflags disable-xcode-ldflags force-serial-build skip-install"
+pkg_opts="configure "
+pkg_opts+="use-build-dir "
+pkg_opts+="skip-system-flags "
+pkg_opts+="skip-auto-compile-flags "
+pkg_opts+="force-serial-build "
+pkg_opts+="skip-install "
+
+pkg_reqs="gfortran"
 pkg_uses=""
-pkg_reqs=""
-pkg_cfg="-b 64 --with-netlib-lapack-tarfile=$BLDR_CACHE_PATH/lapack-3.4.1.tgz"
+
+pkg_cfg=""
+if [[ $BLDR_SYSTEM_IS_64BIT == true ]]; then
+    pkg_cfg+="-b 64 "
+fi
+pkg_cfg+="--with-netlib-lapack-tarfile=$BLDR_CACHE_PATH/lapack-3.4.1.tgz "
+pkg_cfg+="--shared "
+if [[ $BLDR_SYSTEM_IS_LINUX == true ]]; then
+    pkg_cfg+="-Fa al '-fPIC'"
+fi
+
 pkg_cflags=""
 pkg_ldflags=""
 
@@ -109,17 +125,8 @@ function bldr_pkg_compile_method()
                 mk_cmd=""
             fi
 
-            bldr_log_cmd "make $mk_cmd $options"
+            bldr_run_cmd "make $mk_cmd $options"
             bldr_log_split
-
-            if [ $BLDR_VERBOSE != false ]
-            then
-                eval make $mk_cmd $options || bldr_bail "Failed to install package: '$prefix'"
-                bldr_log_split
-            else
-                eval make $mk_cmd $options &> /dev/null || bldr_bail "Failed to install package: '$prefix'"
-                bldr_log_split
-            fi
         done
     fi
     bldr_pop_dir
@@ -129,24 +136,27 @@ function bldr_pkg_compile_method()
 # build and install pkg as local module
 ####################################################################################################
 
-if [ $BLDR_SYSTEM_IS_OSX == true ]
-then
-    bldr_log_warning "$pkg_name isn't supported on MacOSX.  Skipping..."
-    bldr_log_split
-else
-    bldr_build_pkg --category    "$pkg_ctry"    \
-                   --name        "$pkg_name"    \
-                   --version     "$pkg_vers"    \
-                   --info        "$pkg_info"    \
-                   --description "$pkg_desc"    \
-                   --file        "$pkg_file"    \
-                   --url         "$pkg_urls"    \
-                   --uses        "$pkg_uses"    \
-                   --requires    "$pkg_reqs"    \
-                   --options     "$pkg_opts"    \
-                   --cflags      "$pkg_cflags"  \
-                   --ldflags     "$pkg_ldflags" \
-                   --config      "$pkg_cfg"
-fi
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="$pkg_name$pkg_vers.tar.bz2"
+    pkg_urls="http://downloads.sourceforge.net/project/math-atlas/Stable/$pkg_vers/$pkg_file?use_mirror=aarnet"
 
+    bldr_register_pkg                  \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default" \
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
+done
 
+####################################################################################################

@@ -10,8 +10,11 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
+pkg_ctry="network"
 pkg_name="curl"
-pkg_vers="7.26.0"
+
+pkg_default="7.26.0"
+pkg_variants=("7.26.0")
 
 pkg_info="Curl is a command line tool for transferring data with URL syntax."
 
@@ -23,30 +26,58 @@ HTTP form based upload, proxies, cookies, user+password authentication
 (Basic, Digest, NTLM, Negotiate, kerberos...), file transfer resume, 
 proxy tunneling and a busload of other useful tricks."
 
-pkg_file="$pkg_name-$pkg_vers.tar.gz"
-pkg_urls="http://curl.haxx.se/download/$pkg_file"
-pkg_opts="configure"
-pkg_uses=""
-pkg_reqs=""
+pkg_opts="configure enable-static enable-shared"
+pkg_uses="openssl"
+pkg_reqs="$pkg_uses"
+
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg               \
+  --category    "$pkg_ctry"    \
+  --name        "$pkg_name"    \
+  --version     "$pkg_default" \
+  --requires    "$pkg_reqs"    \
+  --uses        "$pkg_uses"    \
+  --options     "$pkg_opts"
+
+####################################################################################################
+
 pkg_cflags=""
 pkg_ldflags=""
-pkg_cfg="--enable-optimize --enable-threaded-resolver --enable-nonblocking"
+
+pkg_cfg="--enable-optimize"
+pkg_cfg+="--enable-threaded-resolver "
+pkg_cfg+="--enable-nonblocking "
+pkg_cfg+="--with-ssl=$BLDR_OPENSSL_BASE_PATH "
 
 ####################################################################################################
 # build and install pkg as local module
 ####################################################################################################
 
-bldr_build_pkg --category    "network"      \
-               --name        "$pkg_name"    \
-               --version     "$pkg_vers"    \
-               --info        "$pkg_info"    \
-               --description "$pkg_desc"    \
-               --file        "$pkg_file"    \
-               --url         "$pkg_urls"    \
-               --uses        "$pkg_uses"    \
-               --requires    "$pkg_reqs"    \
-               --options     "$pkg_opts"    \
-               --cflags      "$pkg_cflags"  \
-               --ldflags     "$pkg_ldflags" \
-               --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+      pkg_file="$pkg_name-$pkg_vers.tar.gz"
+      pkg_urls="http://curl.haxx.se/download/$pkg_file"
+
+      bldr_register_pkg                \
+          --category    "$pkg_ctry"    \
+          --name        "$pkg_name"    \
+          --version     "$pkg_vers"    \
+          --default     "$pkg_default" \
+          --info        "$pkg_info"    \
+          --description "$pkg_desc"    \
+          --file        "$pkg_file"    \
+          --url         "$pkg_urls"    \
+          --uses        "$pkg_uses"    \
+          --requires    "$pkg_reqs"    \
+          --options     "$pkg_opts"    \
+          --cflags      "$pkg_cflags"  \
+          --ldflags     "$pkg_ldflags" \
+          --config      "$pkg_cfg"     \
+          --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
 

@@ -10,9 +10,12 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_vers="2.14.2"
 pkg_ctry="compilers"
 pkg_name="upc"
+
+pkg_default="2.14.2"
+pkg_variants=("2.14.2")
+
 pkg_info="Unified Parallel C (UPC) is an extension of the C programming language designed for high performance computing on large-scale parallel machines."
 
 pkg_desc="Unified Parallel C (UPC) is an extension of the C programming language designed for 
@@ -44,37 +47,38 @@ pkg_file="berkeley_upc-$pkg_vers.tar.gz"
 pkg_urls="http://upc.lbl.gov/download/release/$pkg_file"
 pkg_opts="configure skip-xcode-config"
 
-pkg_reqs="$pkg_reqs zlib/latest"
-pkg_reqs="$pkg_reqs perl/latest"
-pkg_reqs="$pkg_reqs bupc-trans/latest"
-pkg_reqs="$pkg_reqs openmpi/1.6"
-pkg_reqs="$pkg_reqs gcc/latest"
-pkg_uses="$pkg_reqs"
+pkg_reqs="zlib "
+pkg_reqs+="perl "
+pkg_reqs+="bupc-trans "
+pkg_reqs+="openmpi "
+pkg_reqs+="gcc "
+pkg_uses="$pkg_reqs gfortran"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings
 ####################################################################################################
 
-bldr_satisfy_pkg --category    "$pkg_ctry"    \
-                 --name        "$pkg_name"    \
-                 --version     "$pkg_vers"    \
-                 --requires    "$pkg_reqs"    \
-                 --uses        "$pkg_uses"    \
-                 --options     "$pkg_opts"
+bldr_satisfy_pkg                    \
+    --category    "$pkg_ctry"       \
+    --name        "$pkg_name"       \
+    --version     "$pkg_default"    \
+    --requires    "$pkg_reqs"       \
+    --uses        "$pkg_uses"       \
+    --options     "$pkg_opts"
 
 ####################################################################################################
 
 pkg_cfg=""
-pkg_cfg="$pkg_cfg --enable-languages=fortran"
-pkg_cfg="$pkg_cfg BUPC_TRANS=\"$BLDR_BUPC_TRANS_BASE_PATH/targ\""
-pkg_cfg="$pkg_cfg MPI_CC=\"$BLDR_OPENMPI_BIN_PATH/mpicc\""
+pkg_cfg+="--enable-languages=fortran "
+pkg_cfg+="BUPC_TRANS=\"$BLDR_BUPC_TRANS_BASE_PATH/targ\" "
+pkg_cfg+="MPI_CC=\"$BLDR_OPENMPI_BIN_PATH/mpicc\" "
 
 if [[ $BLDR_SYSTEM_IS_OSX == false ]]
 then
-    pkg_cfg="$pkg_cfg --enable-pshm"
-    pkg_cfg="$pkg_cfg --enable-pthreads"
-    pkg_cfg="$pkg_cfg PTHREADS_INCLUDE=/usr/include"
-    pkg_cfg="$pkg_cfg PTHREADS_LIB=/usr/lib"
+    pkg_cfg+="--enable-pshm "
+    pkg_cfg+="--enable-pthreads "
+    pkg_cfg+="PTHREADS_INCLUDE=/usr/include "
+    pkg_cfg+="PTHREADS_LIB=/usr/lib64 "
 fi
 
 pkg_cflags=""
@@ -82,21 +86,30 @@ pkg_ldflags=""
 pkg_patch=""
 
 ####################################################################################################
-# build and install each pkg version as local module
+# register each pkg version with bldr
 ####################################################################################################
 
-bldr_build_pkg                   \
-    --category    "$pkg_ctry"    \
-    --name        "$pkg_name"    \
-    --version     "$pkg_vers"    \
-    --info        "$pkg_info"    \
-    --description "$pkg_desc"    \
-    --file        "$pkg_file"    \
-    --url         "$pkg_urls"    \
-    --uses        "$pkg_uses"    \
-    --requires    "$pkg_reqs"    \
-    --options     "$pkg_opts"    \
-    --patch       "$pkg_patch"   \
-    --cflags      "$pkg_cflags"  \
-    --ldflags     "$pkg_ldflags" \
-    --config      "$pkg_cfg"
+for pkg_vers in ${pkg_variants[@]}
+do
+    pkg_file="berkeley_upc-$pkg_vers.tar.gz"
+    pkg_urls="http://upc.lbl.gov/download/release/$pkg_file"
+
+    bldr_register_pkg                \
+        --category    "$pkg_ctry"    \
+        --name        "$pkg_name"    \
+        --version     "$pkg_vers"    \
+        --default     "$pkg_default" \
+        --info        "$pkg_info"    \
+        --description "$pkg_desc"    \
+        --file        "$pkg_file"    \
+        --url         "$pkg_urls"    \
+        --uses        "$pkg_uses"    \
+        --requires    "$pkg_reqs"    \
+        --options     "$pkg_opts"    \
+        --cflags      "$pkg_cflags"  \
+        --ldflags     "$pkg_ldflags" \
+        --config      "$pkg_cfg"     \
+        --config-path "$pkg_cfg_path"
+done
+
+####################################################################################################
