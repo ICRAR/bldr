@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="mpfr"
 
-pkg_default="3.1.1"
-pkg_variants=("3.1.1")
+pkg_default="3.1.3"
+pkg_variants=("3.1.3")
 
 pkg_info="MPFR is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating point numbers."
 
@@ -60,7 +60,7 @@ pkg_ldflags=""
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-    pkg_urls="http://www.mpfr.org/mpfr-current/$pkg_file"
+    pkg_urls="http://mpfr.loria.fr/mpfr-current/$pkg_file"
 
     bldr_register_pkg                  \
           --category    "$pkg_ctry"    \

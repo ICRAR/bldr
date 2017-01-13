@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compression"
 pkg_name="zlib"
 
-pkg_default="1.2.7"
-pkg_variants=("1.2.7")
+pkg_default="1.2.8"
+pkg_variants=("1.2.8")
 
 pkg_info="ZLIB is a massively spiffy yet delicately unobtrusive compression library"
 

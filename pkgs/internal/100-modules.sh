@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="modules"
 
-pkg_default="3.2.9c"
-pkg_variants=("3.2.9c")
+pkg_default="3.2.10"
+pkg_variants=("3.2.10")
 
 pkg_info="The modules package provides for the dynamic modification of a user's environment via 'module' files."
 
@@ -41,7 +41,6 @@ pkg_uses+="diffutils "
 pkg_uses+="patch "
 pkg_uses+="sed "
 pkg_uses+="grep "
-pkg_uses+="pkg-config "
 pkg_uses+="m4 "
 pkg_uses+="gperf "
 pkg_uses+="autoconf "
@@ -66,7 +65,10 @@ pkg_cfg+="--with-tcl-inc=$BLDR_LOCAL_PATH/languages/tcl/default/include "
 for pkg_vers in ${pkg_variants[@]}
 do
      pkg_file="$pkg_name-$pkg_vers.tar.gz"
-     pkg_urls="http://aarnet.dl.sourceforge.net/project/modules/Modules/modules-3.2.9/$pkg_file"
+     #pkg_urls="http://aarnet.dl.sourceforge.net/project/modules/Modules/modules-3.2.9/$pkg_file"
+     pkg_urls="https://sourceforge.net/projects/modules/files/Modules/modules-3.2.10/$pkg_file"
+
+     export PATH="$BLDR_LOCAL_PATH/languages/tcl/default/unix:$PATH"
 
      bldr_register_pkg                \
          --category    "$pkg_ctry"    \

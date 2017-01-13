@@ -10,45 +10,43 @@ source "bldr.sh"
 # setup pkg definition and resource files
 ####################################################################################################
 
-pkg_ctry="network"
-pkg_name="openssl"
+pkg_ctry="compression"
+pkg_name="libarchive"
 
-pkg_default="1.0.1r"
-pkg_variants=("1.0.1r")
+pkg_default="3.0.4"
+pkg_variants=("3.0.4")
 
-pkg_info="OpenSSL provides a Secure-Sockets Layer implementation (SSL v2/v3) and supports Transport Layer Security (TLS v1)."
+pkg_info="Libarchive is an open-source BSD-licensed C programming library that provides streaming access to a variety of different archive formats, including tar, cpio, pax, Zip, and ISO9660 images."
 
-pkg_desc="The OpenSSL Project is a collaborative effort to develop a robust, 
-commercial-grade, full-featured, and Open Source toolkit implementing the 
-Secure Sockets Layer (SSL v2/v3) and Transport Layer Security (TLS v1) protocols 
-as well as a full-strength general purpose cryptography library managed by a 
-worldwide community of volunteers that use the Internet to communicate, plan, 
-and develop the OpenSSL toolkit and its related documentation."
+pkg_desc="Libarchive is an open-source BSD-licensed C programming library that provides 
+streaming access to a variety of different archive formats, including tar, cpio, pax, Zip, 
+and ISO9660 images.
 
-pkg_opts="configure skip-system-flags force-serial-build"
-pkg_uses=""
-pkg_reqs=""
+The distribution also includes bsdtar and bsdcpio, full-featured implementations of tar 
+and cpio that use libarchive."
+
+pkg_opts="configure"
+pkg_uses="m4 autoconf automake"
+
+pkg_reqs="zlib "
+pkg_reqs+="gzip "
+pkg_reqs+="bzip2 "
+pkg_reqs+="xz "
+pkg_reqs+="lzo "
+pkg_reqs+="openssl "
+
 pkg_cflags=""
 pkg_ldflags=""
+pkg_cfg=""
 
 ####################################################################################################
-# build and install pkg as local module
+# register each pkg version with bldr
 ####################################################################################################
 
 for pkg_vers in ${pkg_variants[@]}
 do
-     pkg_cfg="-L$BLDR_LOCAL_PATH/compression/zlib/default/lib "
-     pkg_cfg+="--openssldir=$BLDR_LOCAL_PATH/$pkg_ctry/$pkg_name/$pkg_vers/ssl "
-     pkg_cfg+="zlib shared "
-
-     if [ $BLDR_SYSTEM_IS_OSX == true ]
-     then
-          pkg_cfg+="no-asm no-krb5 "
-          pkg_cfg+="darwin64-x86_64-cc "
-     fi
-
      pkg_file="$pkg_name-$pkg_vers.tar.gz"
-     pkg_urls="http://www.openssl.org/source/$pkg_file"
+     pkg_urls="https://github.com/downloads/libarchive/libarchive/$pkg_file"
 
      bldr_register_pkg                 \
           --category    "$pkg_ctry"    \
@@ -69,4 +67,5 @@ do
 done
 
 ####################################################################################################
+
 

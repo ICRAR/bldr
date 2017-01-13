@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="isl"
 
-pkg_default="0.10"
-pkg_variants=("0.10")
+pkg_default="0.12.2"
+pkg_variants=("0.12.2" "0.14" "0.15")
 
 pkg_info="ISL is a library for manipulating sets and relations of integer points bounded by linear constraints."
 
@@ -28,7 +28,7 @@ It also includes an ILP solver based on generalized basis reduction.
 ISL is released under LGPLv2.1"
 
 pkg_opts="configure enable-static enable-shared"
-pkg_reqs="gmp pip"
+pkg_reqs="gmp pip libtool automake autoconf m4"
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################

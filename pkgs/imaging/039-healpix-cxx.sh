@@ -11,37 +11,22 @@ source "bldr.sh"
 ####################################################################################################
 
 pkg_ctry="imaging"
-pkg_name="openexr"
+pkg_name="healpix-cxx"
 
-pkg_default="trunk"
-pkg_variants=("trunk" "2.0-beta1")
-pkg_mirrors=(
-    "git://github.com/openexr/openexr.git"
-    "http://github.com/openexr/openexr/zipball/v2_beta.1"
-    )
-pkg_bases=(
-    "openexr-trunk"
-    "openexr-openexr-93484b1"
-    )
+pkg_default="2.20a"
+pkg_variants=("2.20a")
+pkg_releases=("2011Feb09")
 
-pkg_info="OpenEXR is a high dynamic-range (HDR) image file format developed by Industrial Light & Magic for use in computer imaging applications."
+pkg_info="Hierarchical Equal Area isoLatitude Pixelization (HEALpix) of a sphere bindings for CXX."
 
-pkg_desc="OpenEXR is a high dynamic-range (HDR) image file format developed by 
-Industrial Light & Magic for use in computer imaging applications.
+pkg_desc="Hierarchical Equal Area isoLatitude Pixelization (HEALpix) of a sphere bindings for CXX. 
+Software for pixelization, hierarchical indexation, synthesis, analysis, 
+and visualization of data on the sphere."
 
-OpenEXR is used by ILM on all motion pictures currently in production. 
-The first movies to employ OpenEXR were Harry Potter and the Sorcerers Stone, 
-Men in Black II, Gangs of New York, and Signs. Since then, OpenEXR has become 
-ILM's main image file format."
-
-pkg_reqs="zlib lcms2 "
-if [[ "$pkg_default" == "trunk" ]]; then
-    pkg_reqs+="ilmbase/trunk "
-else
-    pkg_reqs+="ilmbase "
-fi
-
+pkg_opts="configure skip-config force-serial-build migrate-build-tree"
+pkg_reqs="zlib cfitsio"
 pkg_uses="$pkg_reqs"
+pkg_cfg_path="src/cxx"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings
@@ -57,32 +42,23 @@ bldr_satisfy_pkg                 \
 
 ####################################################################################################
 
-ilm_cflags=""
-ilm_ldflags=""
-
-ilm_subs=("Half" "IlmThread" "Imath" "ImathTest" "Iex" "IexMath" "IexTest" "OpenEXR")
-for sub_inc in ${ilm_subs[@]}
-do
-    ilm_cflags+=":-I$BLDR_ILMBASE_INCLUDE_PATH/$sub_inc "
-done
-
-if [[ $BLDR_SYSTEM_IS_LINUX == true ]]
-then
-     ilm_cflags+="-fPIC "
-     ilm_cflags+="-DHAVE_PTHREAD "
-     ilm_cflags+="-DHAVE_POSIX_SEMAPHORES "
+export EXTERNAL_CFITSIO=yes
+if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
+    export HEALPIX_TARGET=osx
+    pkg_opts+="use-build-tree=src/cxx/osx "
+    pkg_opts+="-MHEALPIX_TARGET=osx "
+else
+    export HEALPIX_TARGET=generic_gcc
+    pkg_opts+="use-build-tree=src/cxx/generic_gcc "
+    pkg_opts+="-MHEALPIX_TARGET=generic_gcc "
+    pkg_opts+="-MOPTS=-fPIC "
 fi
 
-if [[ $BLDR_SYSTEM_IS_OSX == true ]]
-then
-     ilm_cflags+="-DHAVE_PTHREAD "
-fi
-
-pkg_uses="$pkg_reqs"
-
-pkg_cfg="--disable-dependency-tracking "
-pkg_cfg+="Z_CFLAGS=-I\"$BLDR_ZLIB_INCLUDE_PATH\" "
-pkg_cfg+="Z_LIBS=-lz "
+pkg_opts+="-MEXTERNAL_CFITSIO=yes "
+pkg_opts+="-MCFITSIO_INCDIR=$BLDR_CFITSIO_INCLUDE_PATH "
+pkg_opts+="-MCFITSIO_LIBDIR=$BLDR_CFITSIO_LIB_PATH "
+pkg_opts+="-MCFITSIO_EXT_LIB=$BLDR_CFITSIO_LIB_PATH/libcfitsio.a "
+pkg_opts+="-MCFITSIO_EXT_INC=$BLDR_CFITSIO_INCLUDE_PATH "
 
 ####################################################################################################
 # register each pkg version with bldr
@@ -91,24 +67,16 @@ pkg_cfg+="Z_LIBS=-lz "
 let pkg_idx=0
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="$pkg_name-$pkg_vers.zip"
-    pkg_base=${pkg_bases[$pkg_idx]}
-    pkg_urls=${pkg_mirrors[$pkg_idx]}
+     pkg_date=${pkg_releases[$pkg_idx]}
+     pkg_file="Healpix_${pkg_vers}_${pkg_date}.tar.gz"
+     pkg_urls="http://downloads.sourceforge.net/project/healpix/Healpix_${pkg_vers}/${pkg_file}"
+     
+     pkg_cflags=$hpix_cflags
+     pkg_cflags+="-MBINDIR=${BLDR_LOCAL_PATH}/$pkg_ctry/$pkg_name/$pkg_vers/bin "
+     pkg_cflags+="-MLIBDIR=${BLDR_LOCAL_PATH}/$pkg_ctry/$pkg_name/$pkg_vers/lib "
+     pkg_cflags+="-MINCDIR=${BLDR_LOCAL_PATH}/$pkg_ctry/$pkg_name/$pkg_vers/include "
 
-    pkg_ldflags="$ilm_ldflags "
-    pkg_cflags="$ilm_cflags "
-    pkg_cflags+=":-I$BLDR_BUILD_PATH/$pkg_ctry/$pkg_name/$pkg_vers/$pkg_base/OpenEXR/IlmImf"
-
-    pkg_opts="cmake skip-boot force-serial-build "
-
-    if [[ "$pkg_base" != "trunk" ]]; then
-        pkg_opts+="use-base-dir=$pkg_base "
-        pkg_cfg_path="$pkg_base/OpenEXR"
-    else
-        pkg_cfg_path="OpenEXR"
-    fi
-
-    bldr_register_pkg                 \
+     bldr_register_pkg                \
          --category    "$pkg_ctry"    \
          --name        "$pkg_name"    \
          --version     "$pkg_vers"    \
@@ -124,10 +92,8 @@ do
          --ldflags     "$pkg_ldflags" \
          --config      "$pkg_cfg"     \
          --config-path "$pkg_cfg_path"
-
-    let pkg_idx++
+ 
+     let pkg_idx++
 done
 
 ####################################################################################################
-
-

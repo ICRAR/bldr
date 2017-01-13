@@ -14,6 +14,7 @@ pkg_ctry="languages"
 pkg_name="tcl"
 
 pkg_default="8.5.12"
+#pkg_variants=("8.6.5" "8.5.12")
 pkg_variants=("8.5.12")
 
 pkg_info="Tool Command Language (Tcl) is an interpreted language and very portable interpreter for that language. "

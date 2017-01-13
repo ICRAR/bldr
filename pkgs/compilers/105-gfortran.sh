@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="gfortran"
 
-pkg_default="4.7.1"
-pkg_variants=("4.7.1" "4.7.2")
+pkg_default="4.7.2"
+pkg_variants=("4.7.2" "4.7.4")
 
 pkg_info="The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, Ada, and Go, as well as libraries for these languages (libstdc++, libgcj,...)."
 
@@ -37,7 +37,7 @@ pkg_reqs+="gmp "
 pkg_reqs+="ppl "
 pkg_reqs+="mpfr "
 pkg_reqs+="mpc "
-pkg_reqs+="isl "
+#pkg_reqs+="isl "
 pkg_reqs+="osl "
 pkg_reqs+="cloog "
 pkg_reqs+="perl "

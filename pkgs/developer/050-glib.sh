@@ -25,7 +25,7 @@ utility functions for strings and common data structures."
 
 pkg_opts="configure enable-static enable-shared"
 
-pkg_reqs="pkg-config "
+pkg_reqs="libtool "
 pkg_reqs+="zlib "
 pkg_reqs+="bzip2 "
 pkg_reqs+="pcre "
@@ -70,6 +70,9 @@ else
     glb_cfg+="--with-libiconv=gnu "
 fi
 pkg_patch=""
+
+export PCRE_CFLAGS="-I$BLDR_PCRE_INCLUDE_PATH " 
+export PCRE_LIBS="-L$BLDR_PCRE_LIB_PATH -lpcre -lpcrecpp "
 
 ####################################################################################################
 # register each pkg version with bldr

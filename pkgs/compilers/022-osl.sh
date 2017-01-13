@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="osl"
 
-pkg_default="0.8.4"
-pkg_variants=("0.8.4")
+pkg_default="0.9.0"
+pkg_variants=("0.9.0")
 
 pkg_info="The OpenScop Library (OSL) is a BSD-Licensed implementation of the OpenScop specification data format."
 
@@ -63,7 +63,8 @@ pkg_patch=""
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://www.lri.fr/~bastoul/development/openscop/docs/$pkg_file"
+    #pkg_urls="http://www.lri.fr/~bastoul/development/openscop/docs/$pkg_file"
+    pkg_urls="http://icps.u-strasbg.fr/~bastoul/development/openscop/docs/$pkg_file"
 
     bldr_register_pkg                \
         --category    "$pkg_ctry"    \

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="bupc-trans"
 
-pkg_default="2.14.2"
-pkg_variants=("2.14.2")
+pkg_default="2.22.0"
+pkg_variants=("2.22.0")
 
 pkg_info="The Berkeley UPC-to-C translator provides a source-to-source compiler for translating Unified Parallel C (UPC) to ANSI-C99."
 

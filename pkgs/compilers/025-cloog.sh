@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="cloog"
 
-pkg_default="0.17.0"
-pkg_variants=("0.17.0")
+pkg_default="0.18.4"
+pkg_variants=("0.18.4" "0.17.0")
 
 pkg_info="CLooG is a free software and library to generate code for scanning Z-polyhedra."
 
@@ -37,7 +37,7 @@ pkg_opts="configure force-bootstrap enable-static enable-shared"
 
 pkg_reqs="zlib "
 pkg_reqs+="gmp "
-pkg_reqs+="isl "
+#pkg_reqs+="isl "
 pkg_reqs+="osl "
 pkg_uses="$pkg_reqs"
 

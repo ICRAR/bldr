@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="grep"
 
-pkg_default="2.13"
-pkg_variants=("2.13")
+pkg_default="2.23"
+pkg_variants=("2.23")
 
 pkg_info="GNU GREP searches input files for lines containing a match to a given regular expression pattern list."
 

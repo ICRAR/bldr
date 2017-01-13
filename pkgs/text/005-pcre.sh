@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="text"
 pkg_name="pcre"
 
-pkg_default="8.31"
-pkg_variants=("8.31")
+pkg_default="8.38"
+pkg_variants=("8.38" "2-10.21")
 
 pkg_info="The PCRE package contains Perl Compatible Regular Expression libraries."
 

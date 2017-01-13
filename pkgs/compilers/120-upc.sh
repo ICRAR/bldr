@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="upc"
 
-pkg_default="2.14.2"
-pkg_variants=("2.14.2")
+pkg_default="2.22.0"
+pkg_variants=("2.22.0")
 
 pkg_info="Unified Parallel C (UPC) is an extension of the C programming language designed for high performance computing on large-scale parallel machines."
 

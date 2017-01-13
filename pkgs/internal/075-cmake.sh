@@ -14,9 +14,10 @@ pkg_ctry="internal"
 pkg_name="cmake"
 
 pkg_default="2.8.9"
-pkg_variants=("2.6.4" "2.8.9")
+pkg_variants=("2.6.4" "2.8.9" "trunk")
 pkg_vers_urls=("http://www.cmake.org/files/v2.6" 
-               "http://www.cmake.org/files/v2.8")
+               "http://www.cmake.org/files/v2.8"
+               "git://cmake.org/cmake.git")
 
 pkg_info="CMake is a family of tools designed to build, test and package software."
 
@@ -25,7 +26,7 @@ CMake is used to control the software compilation process using simple platform
 and compiler independent configuration files. CMake generates native makefiles 
 and workspaces that can be used in the compiler environment of your choice. "
 
-pkg_opts="configure force-static force-bootstrap skip-config"
+pkg_opts="configure force-static force-bootstrap skip-config skip-xcode-config"
 
 pkg_uses="coreutils "
 pkg_uses+="findutils "
@@ -37,12 +38,13 @@ pkg_uses+="tar "
 pkg_uses+="m4 "
 pkg_uses+="autoconf "
 pkg_uses+="automake "
-pkg_uses+="pkg-config "
 pkg_uses+="make "
 pkg_reqs="$pkg_uses"
 pkg_cflags=""
 pkg_ldflags=""
 pkg_cfg=""
+
+export CMAKE_OSX_SYSROOT=$BLDR_OSX_SYSROOT
 
 ####################################################################################################
 # register each pkg version with bldr
@@ -52,8 +54,14 @@ let pkg_idx=0
 for pkg_vers in ${pkg_variants[@]}
 do
      pkg_file="$pkg_name-$pkg_vers.tar.gz"
-     pkg_host="${pkg_vers_url[$pkg_idx]}"
-     pkg_urls="$pkg_host/$pkg_file"
+     pkg_host="${pkg_vers_urls[$pkg_idx]}"
+
+     if [ "$pkg_vers" == "trunk" ] 
+     then
+        pkg_urls="$pkg_host"
+     else
+        pkg_urls="$pkg_host/$pkg_file"
+     fi
 
      bldr_register_pkg                \
          --category    "$pkg_ctry"    \

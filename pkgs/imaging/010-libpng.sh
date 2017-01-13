@@ -14,7 +14,7 @@ pkg_ctry="imaging"
 pkg_name="libpng"
 
 pkg_default="1.5.12"
-pkg_variants=("1.5.12")
+pkg_variants=("1.2.50" "1.5.12")
 
 pkg_info="PNG is an open, extensible image format with lossless compression."
 
@@ -22,9 +22,16 @@ pkg_desc="PNG is an open, extensible image format with lossless compression.
 Libpng is the official PNG reference library. It supports almost all PNG 
 features, is extensible, and has been extensively tested for over 16 years."
 
-pkg_opts="configure force-static"
-pkg_reqs="zlib pkg-config"
-pkg_uses="zlib pkg-config"
+pkg_opts="configure "
+if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
+    pkg_opts+="force-static "
+else
+    pkg_opts+="enable-static "
+    pkg_opts+="enable-shared "
+fi
+
+pkg_reqs="zlib libtool"
+pkg_uses="$pkg_reqs"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings

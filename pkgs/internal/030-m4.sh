@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="m4"
 
-pkg_default="1.4.16"
-pkg_variants=("1.4.16")
+pkg_default="1.4.17"
+pkg_variants=("1.4.17")
 
 pkg_info="GNU M4 is an implementation of the traditional Unix macro processor. "
 
@@ -48,8 +48,8 @@ pkg_cfg=""
 for pkg_vers in ${pkg_variants[@]}
 do
      pkg_file="$pkg_name-$pkg_vers.tar.gz"
-     pkg_urls="http://gnu.mirror.iweb.com/gnu/m4/$pkg_file"
-     pkg_urls+=";http://ftp.gnu.org/gnu/m4/$pkg_file"
+     pkg_urls="http://ftp.gnu.org/gnu/m4/$pkg_file"
+     pkg_urls+=";http://gnu.mirror.iweb.com/gnu/m4/$pkg_file"
 
      bldr_register_pkg                \
          --category    "$pkg_ctry"    \

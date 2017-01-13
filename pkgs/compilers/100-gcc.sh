@@ -13,8 +13,9 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="gcc"
 
-pkg_default="4.7.1"
-pkg_variants=("4.7.1" "4.7.2")
+pkg_default="4.7.4"
+#pkg_variants=("4.7.2" "4.7.4" "4.8.5" "4.9.3" "5.3.0")
+pkg_variants=("4.7.4" "4.7.2" "4.8.5" "4.9.3" "5.3.0")
 
 pkg_info="The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, Ada, and Go, as well as libraries for these languages (libstdc++, libgcj,...)."
 
@@ -37,7 +38,7 @@ pkg_reqs+="gmp "
 pkg_reqs+="ppl "
 pkg_reqs+="mpfr "
 pkg_reqs+="mpc "
-pkg_reqs+="isl "
+#pkg_reqs+="isl "
 pkg_reqs+="osl "
 pkg_reqs+="cloog "
 pkg_reqs+="perl "
@@ -61,7 +62,7 @@ pkg_cfg="--disable-bootstrap "
 pkg_cfg+="--enable-checking=release "
 pkg_cfg+="--enable-languages=c,c++,objc,obj-c++,lto "
 pkg_cfg+="--with-gmp=\"$BLDR_GMP_BASE_PATH\" "
-pkg_cfg+="--with-isl=\"$BLDR_ISL_BASE_PATH\" "
+#pkg_cfg+="--with-isl=\"$BLDR_ISL_BASE_PATH\" "
 pkg_cfg+="--with-osl=\"$BLDR_OSL_BASE_PATH\" "
 pkg_cfg+="--with-mpfr=\"$BLDR_MPFR_BASE_PATH\" "
 pkg_cfg+="--with-mpc=\"$BLDR_MPC_BASE_PATH\" "
@@ -87,7 +88,8 @@ pkg_patch=""
 for pkg_vers in ${pkg_variants}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-    pkg_urls="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/$pkg_name-$pkg_vers/$pkg_file"
+    #pkg_urls="http://ftp.tsukuba.wide.ad.jp/software/gcc/releases/$pkg_name-$pkg_vers/$pkg_file"
+    pkg_urls="http://mirror.aarnet.edu.au/pub/gnu/gcc/$pkg_name-$pkg_vers/$pkg_file"
 
     bldr_register_pkg                \
         --category    "$pkg_ctry"    \
