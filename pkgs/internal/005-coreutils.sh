@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="coreutils"
 
-pkg_default="8.25"
-pkg_variants=("8.25")
+pkg_default="8.26"
+pkg_variants=("8.26")
 
 pkg_info="The GNU Core Utilities are the basic file, shell and text manipulation utilities of the GNU operating system. "
 

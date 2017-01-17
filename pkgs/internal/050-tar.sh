@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="tar"
 
-pkg_default="1.26"
-pkg_variants=("1.26")
+pkg_default="1.29"
+pkg_variants=("1.29")
 
 pkg_info="GNU tar creates and manipulates archives which are actually collections of many other files."
 

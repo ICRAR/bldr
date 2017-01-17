@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="libtool"
 
-pkg_default="2.4.2"
-pkg_variants=("2.4.2")
+pkg_default="2.4.6"
+pkg_variants=("2.4.6")
 
 pkg_info="GNU libtool is a generic library support script."
 

@@ -13,9 +13,9 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="gcc"
 
-pkg_default="4.7.4"
+pkg_default="4.8.5"
 #pkg_variants=("4.7.2" "4.7.4" "4.8.5" "4.9.3" "5.3.0")
-pkg_variants=("4.7.4" "4.7.2" "4.8.5" "4.9.3" "5.3.0")
+pkg_variants=("4.7.4" "4.8.5" "4.9.4" "5.4.0" "6.3.0")
 
 pkg_info="The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, Ada, and Go, as well as libraries for these languages (libstdc++, libgcj,...)."
 

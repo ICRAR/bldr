@@ -39,7 +39,7 @@ flexibility and power.
 In 1998, it was also referred to as the 'duct tape that holds the Internet together', 
 in reference to its ubiquity and perceived inelegance."
 
-pkg_default="5.16.1"
+pkg_default="5.24.1"
 pkg_variants=("$pkg_default")
 
 pkg_opts="configure force-serial-build config-disable-prefix skip-xcode-config"

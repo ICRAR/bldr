@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="automake"
 
-pkg_default="1.12.2"
-pkg_variants=("1.11" "1.12.2")
+pkg_default="1.14.1"
+pkg_variants=("1.12.2" "1.14.1")
 
 pkg_info="Automake is a Makefile generator."
 
