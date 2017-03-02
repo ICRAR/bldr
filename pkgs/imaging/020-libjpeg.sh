@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="imaging"
 pkg_name="libjpeg"
 
-pkg_default="8d"
-pkg_variants=("8d")
+pkg_default="9b"
+pkg_variants=("9b")
 
 pkg_info="JPEG is a standardized compression method for full-color and gray-scale images."
 

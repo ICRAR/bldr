@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="sed"
 
-pkg_default="4.2.1"
-pkg_variants=("4.2.1")
+pkg_default="4.2.2"
+pkg_variants=("4.2.2")
 
 pkg_info="GNU SED is a stream editor used to perform basic text transformations on an input stream (a file or input from a pipeline). "
 

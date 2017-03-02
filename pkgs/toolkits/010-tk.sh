@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="toolkits"
 pkg_name="tk"
 
-pkg_default="8.5.12"
-pkg_variants=("8.5.12")
+pkg_default="8.6.6"
+pkg_variants=("8.5.19" "8.6.6")
 
 pkg_info="Tk is a graphical user interface toolkit that takes developing desktop applications to a higher level than conventional approaches."
 

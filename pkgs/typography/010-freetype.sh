@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="typography"
 pkg_name="freetype"
 
-pkg_default="2.4.10"
-pkg_variants=("2.4.10")
+pkg_default="2.7.1"
+pkg_variants=("2.7.1")
 
 pkg_info="FreeType is a free, high-quality, and portable font engine."
 
@@ -34,6 +34,7 @@ pkg_reqs="zlib "
 pkg_reqs+="libicu "
 pkg_reqs+="libiconv "
 pkg_reqs+="libxml2 "
+pkg_reqs+="libpng/1.2.57 "
 
 pkg_cflags=""
 pkg_ldflags=""

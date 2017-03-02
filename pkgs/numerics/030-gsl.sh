@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="gsl"
 
-pkg_default="1.15"
-pkg_variants=("1.15")
+pkg_default="2.3"
+pkg_variants=("1.16" "2.3")
 
 pkg_info="The GNU Scientific Library (GSL) is a numerical library for C and C++ programmers."
 

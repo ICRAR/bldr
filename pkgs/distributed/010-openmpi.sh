@@ -13,8 +13,11 @@ source "bldr.sh"
 pkg_ctry="distributed"
 pkg_name="openmpi"
 
-pkg_default="1.6.3"
-pkg_variants=("1.6.3" "1.6.5")
+#pkg_default="1.10.5"
+pkg_default="1.10.5"
+pkg_variants=("1.10.5")
+#pkg_variants=("1.6.5" "1.8.8" "1.10.5")
+#pkg_variants=("1.10.5")
 
 pkg_info="The Open MPI Project is an open source MPI-2 implementation that is developed and maintained by a consortium of academic, research, and industry partners."
 
@@ -27,14 +30,15 @@ across the High Performance Computing community in order to build the best MPI l
 Open MPI offers advantages for system and software vendors, application developers and computer 
 science researchers."
 
-pkg_opts="configure skip-auto-compile-flags skip-system-flags enable-static enable-shared "
-pkg_reqs="zlib papi "
+pkg_opts="configure skip-xcode-config enable-static enable-shared"
+pkg_reqs="zlib papi gfortran "
 if [[ $BLDR_SYSTEM_IS_OSX == false ]]
 then
-    pkg_reqs+="ftb valgrind "
-    pkg_uses="$pkg_reqs gfortran torque "
+    pkg_reqs+="ftb valgrind libtool"
+    #pkg_uses="$pkg_reqs torque"
+    pkg_uses="$pkg_reqs"
 else
-    pkg_uses="$pkg_reqs gfortran "
+    pkg_uses="$pkg_reqs"
 fi
 
 ####################################################################################################
@@ -54,42 +58,10 @@ bldr_satisfy_pkg                    \
 pkg_cflags=""
 pkg_ldflags=""
 
-if [[ $BLDR_SYSTEM_IS_OSX == false ]]
-then
-    pkg_cflags+="-I$BLDR_ZLIB_INCLUDE_PATH "
-    pkg_cflags+="-I$BLDR_PAPI_INCLUDE_PATH "
-    pkg_cflags+="-I$BLDR_FTB_INCLUDE_PATH "
-    pkg_cflags+="-I$BLDR_TORQUE_INCLUDE_PATH "
-    pkg_cflags+="-I$BLDR_VALGRIND_INCLUDE_PATH "
-
-    pkg_ldflags+="-L$BLDR_ZLIB_LIB_PATH "
-    pkg_ldflags+="-L$BLDR_PAPI_LIB_PATH "
-    pkg_ldflags+="-L$BLDR_FTB_LIB_PATH "
-    pkg_ldflags+="-L$BLDR_TORQUE_LIB_PATH "
-    pkg_ldflags+="-L$BLDR_VALGRIND_LIB_PATH "
-
-    if [[ $BLDR_SYSTEM_IS_LINUX == true ]]
-    then
-        if [ -d /usr/include/infiniband ]
-        then
-            pkg_cflags+="-I/usr/include/infiniband "    
-            pkg_cflags+="-I/usr/include/infiniband/opensm "    
-        fi
-    fi
-
-else
-
-    pkg_cflags+="-I$BLDR_ZLIB_INCLUDE_PATH "
-    pkg_cflags+="-I$BLDR_PAPI_INCLUDE_PATH "
-
-    pkg_ldflags+="-L$BLDR_ZLIB_LIB_PATH "
-    pkg_ldflags+="-L$BLDR_PAPI_LIB_PATH "
-fi
-
-
 pkg_cfg="--enable-btl-openib-failover "
-pkg_cfg+="--enable-mpi-f77 "
-pkg_cfg+="--enable-mpi-f90 "
+pkg_cfg+="--enable-mpi-fortran=all "
+#pkg_cfg+="--enable-mpi-f77 "
+#pkg_cfg+="--enable-mpi-f90 "
 pkg_cfg+="--enable-mpi-thread-multiple "
 pkg_cfg+="--enable-heterogeneous "
 
@@ -107,13 +79,16 @@ fi
 if [[ $BLDR_SYSTEM_IS_OSX == true ]] 
 then
     pkg_cfg+="--disable-vt "
+else
+    pkg_cfg+="--with-ftb=\"$BLDR_FTB_BASE_PATH\" "
+    pkg_cfg+="--with-tm=\"$BLDR_TORQUE_BASE_PATH\" "
 fi
 
 if [[ $BLDR_SYSTEM_IS_LINUX == true ]] 
 then
-     pkg_cfg+="--with-ftb=\"$BLDR_FTB_BASE_PATH\" "
-     pkg_cfg+="--with-tm=\"$BLDR_TORQUE_BASE_PATH\" "
-     pkg_cfg+="--with-libltdl=external "
+     pkg_cflags+="-I/usr/include/infiniband "    
+     pkg_cflags+="-I/usr/include/infiniband/opensm "    
+     #pkg_cfg+="--with-libltdl=external "
      pkg_cfg+="--with-psm=no "
      pkg_cfg+="--with-gnu-ld "
      pkg_cfg+="--with-threads=posix "
@@ -126,7 +101,7 @@ then
 
      if [[ -d "/usr/local/cuda" ]]
      then
-         pkg_cfg+="--with-cuda "
+         pkg_cfg+="-with-cuda "
      fi
 
 #     if [[ -d "/opt/mellanox/mxm/lib" ]]
@@ -146,7 +121,7 @@ fi
 for pkg_vers in ${pkg_variants[@]}
 do
      pkg_file="$pkg_name-$pkg_vers.tar.bz2"
-     pkg_urls="http://www.open-mpi.org/software/ompi/v1.6/downloads/$pkg_file"
+     pkg_urls="http://www.open-mpi.org/software/ompi/v1.10/downloads/$pkg_file"
 
      bldr_register_pkg                \
          --category    "$pkg_ctry"    \

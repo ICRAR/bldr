@@ -14,7 +14,7 @@ pkg_ctry="internal"
 pkg_name="autoconf"
 
 pkg_default="2.69"
-pkg_variants=("2.66" "2.68" "2.69")
+pkg_variants=("2.68" "2.69")
 
 pkg_info="Autoconf is an extensible system to automatically configure software source code packages. "
 

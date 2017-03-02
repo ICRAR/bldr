@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="text"
 pkg_name="libunistring"
 
-pkg_default="0.9.3"
-pkg_variants=("0.9.3")
+pkg_default="0.9.7"
+pkg_variants=("0.9.7")
 
 pkg_info="libunistring provides functions for manipulating Unicode strings and for manipulating C strings according to the Unicode standard."
 

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="gmp"
 
-pkg_default="5.0.5"
-pkg_variants=("5.0.5")
+pkg_default="6.1.2"
+pkg_variants=("5.1.3" "6.1.2")
 
 pkg_info="GMP is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating point numbers."
 
@@ -39,7 +39,8 @@ The first GMP release was made in 1991. It is continually developed and maintain
 with a new release about once a year."
 
 pkg_opts="configure enable-static enable-shared"
-pkg_reqs="pkg-config zlib"
+#pkg_reqs="pkg-config zlib"
+pkg_reqs="zlib"
 pkg_uses="$pkg_reqs"
 pkg_cfg="--enable-cxx"
 pkg_patch=""

@@ -64,7 +64,8 @@ pkg_ldflags=""
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://www.multiprecision.org/mpc/download/$pkg_file"
+    #pkg_urls="http://www.multiprecision.org/mpc/download/$pkg_file"
+    pkg_urls="ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz"
 
     bldr_register_pkg                  \
           --category    "$pkg_ctry"    \

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="graphics"
 pkg_name="pixman"
 
-pkg_default="0.26.2"
-pkg_variants=("0.26.2")
+pkg_default="0.34.0"
+pkg_variants=("0.34.0")
 
 pkg_info="Pixman is a low-level software library for pixel manipulation, providing features such as image compositing and trapezoid rasterization."
 
@@ -29,6 +29,8 @@ Pixman is free and open source software. It is available to be redistributed and
 modified under the terms of the MIT license. "
 
 pkg_opts="configure enable-static enable-shared"
+pkg_opts+=" config-prepend-env "
+
 pkg_reqs=""
 pkg_reqs+="zlib "
 pkg_reqs+="libxml2 "
@@ -36,8 +38,9 @@ pkg_reqs+="libicu "
 pkg_reqs+="libiconv "
 pkg_reqs+="gettext "
 pkg_reqs+="glib "
-pkg_reqs+="libpng "
-pkg_reqs+="pango "
+pkg_reqs+="libpng/1.2.57 "
+#pkg_reqs+="pango "
+pkg_reqs+="pkg-config "
 pkg_uses="$pkg_reqs"
 
 pkg_cfg=""

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="libffi"
 
-pkg_default="3.0.11"
-pkg_variants=("3.0.11")
+pkg_default="3.2.1"
+pkg_variants=("3.2.1")
 
 pkg_info="The libffi library provides a portable, high level programming interface to various calling conventions."
 

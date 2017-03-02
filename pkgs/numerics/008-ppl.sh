@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="ppl"
 
-pkg_default="1.0"
-pkg_variants=("1.0")
+pkg_default="1.2"
+pkg_variants=("1.2")
 
 pkg_info="The Parma Polyhedra Library (PPL) provides numerical abstractions especially targeted at applications in the field of analysis and verification of complex systems."
 

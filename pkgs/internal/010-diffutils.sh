@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="diffutils"
 
-pkg_default="3.2"
-pkg_variants=("3.2")
+pkg_default="3.5"
+pkg_variants=("3.5")
 
 pkg_info="GNU Diffutils is a package of several programs related to finding differences between files."
 
@@ -53,7 +53,7 @@ pkg_cfg=""
 
 for pkg_vers in ${pkg_variants[@]}
 do
-     pkg_file="$pkg_name-$pkg_vers.tar.gz"
+     pkg_file="$pkg_name-$pkg_vers.tar.xz"
      pkg_urls="http://ftp.gnu.org/gnu/$pkg_name/$pkg_file"
 
      bldr_register_pkg                \

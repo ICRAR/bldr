@@ -12,8 +12,8 @@ source "bldr.sh"
 
 pkg_ctry="text"
 pkg_name="libxml2"
-pkg_default="2.8.0"
-pkg_variants=("2.8.0")
+pkg_default="2.9.3"
+pkg_variants=("2.9.3")
 
 pkg_info="Libxml2 is the XML C parser and toolkit developed for the Gnome project"
 
@@ -25,9 +25,12 @@ information enclosed between angle brackets. HTML is the most well-known markup
 language. Though the library is written in C a variety of language bindings make 
 it available in other environments."
 
-pkg_reqs="libtool coreutils zlib gzip xz"
+pkg_reqs="libtool coreutils zlib gzip xz python"
 pkg_uses="$pkg_reqs"
-pkg_cfg=""
+#pkg_cfg=""
+pkg_cfg=" --with-zlib=$BLDR_LOCAL_PATH/compression/zlib/default "
+pkg_cfg+=" --with-python=$BLDR_LOCAL_PATH/languages/python/default "
+pkg_cfg+=" --with-sax1"
 pkg_cflags=""
 pkg_ldflags=""
 
@@ -47,6 +50,7 @@ function bldr_pkg_install_method()
       local pkg_uses=""
       local pkg_reqs=""
       local pkg_opts=""
+      #local pkg_opts=" --with-zlib=\"$BLDR_ZLIB_BASE_PATH\" "
       local pkg_cflags=""
       local pkg_ldflags=""
       local pkg_cfg=""
@@ -124,6 +128,7 @@ do
     pkg_urls="http://xmlsoft.org/sources/$pkg_file"
 
     pkg_opts="configure"
+    pkg_opts+=" --with-zlib=\"$BLDR_ZLIB_BASE_PATH\" "
     pkg_opts+=" -EXML_CATALOG_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/catalog\""
     pkg_opts+=" -EXML_DOCBOOK_FILES=\"$BLDR_LOCAL_ENV_PATH/$pkg_ctry/$pkg_name/$pkg_vers/etc/xml/docbook\""
 

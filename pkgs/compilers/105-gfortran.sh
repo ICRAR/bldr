@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compilers"
 pkg_name="gfortran"
 
-pkg_default="4.7.2"
-pkg_variants=("4.7.2" "4.7.4")
+pkg_default="6.3.0"
+pkg_variants=("6.3.0" "4.9.4" "5.4.0")
 
 pkg_info="The GNU Compiler Collection includes front ends for C, C++, Objective-C, Fortran, Java, Ada, and Go, as well as libraries for these languages (libstdc++, libgcj,...)."
 

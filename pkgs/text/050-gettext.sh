@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="text"
 pkg_name="gettext"
 
-pkg_default="0.18.1.1"
-pkg_variants=("0.18.1.1")
+pkg_default="0.19.8"
+pkg_variants=("0.19.8")
 
 pkg_info="GNU gettext is designed to minimize the impact of internationalization on program sources."
 

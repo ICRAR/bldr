@@ -13,9 +13,9 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="glib"
 
-pkg_default="2.32.4"
-pkg_variants=("2.32.4")
-pkg_mirrors=("http://ftp.gnome.org/pub/GNOME/sources/glib/2.32")
+pkg_default="2.51.1"
+pkg_variants=("2.51.1")
+pkg_mirrors=("http://ftp.gnome.org/pub/GNOME/sources/glib/2.51")
 
 pkg_info="GLib provides the core application building blocks for libraries and applications written in C."
 

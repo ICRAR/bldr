@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compression"
 pkg_name="xz"
 
-pkg_default="5.0.3"
-pkg_variants=("5.0.3")
+pkg_default="5.2.3"
+pkg_variants=("5.2.3")
 
 pkg_info="XZ utils is free general-purpose data compression software with high compression ratio."
 

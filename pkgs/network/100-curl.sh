@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="network"
 pkg_name="curl"
 
-pkg_default="7.26.0"
-pkg_variants=("7.26.0")
+pkg_default="7.52.1"
+pkg_variants=("7.52.1")
 
 pkg_info="Curl is a command line tool for transferring data with URL syntax."
 

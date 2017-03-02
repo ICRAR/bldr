@@ -13,15 +13,13 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="boost"
 
-pkg_default="1.42.0"
+pkg_default="1.55.0"
 pkg_variants=(
-    "1.49.0" "1.51.0" "1.52.0" "1.55.0" "1.60.0")
+    "1.49.0" "1.55.0" "1.63.0")
 pkg_distribs=(
     "boost_1_49_0.tar.bz2"
-    "boost_1_51_0.tar.bz2"
-    "boost_1_52_0.tar.bz2"
     "boost_1_55_0.tar.bz2"
-    "boost_1_60_0.tar.bz2")
+    "boost_1_63_0.tar.bz2")
 
 pkg_info="Boost provides free peer-reviewed portable C++ source libraries."
 

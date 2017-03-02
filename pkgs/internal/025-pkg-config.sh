@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="pkg-config"
 
-pkg_default="0.23"
-pkg_variants=("0.23")
+pkg_default="0.29.1"
+pkg_variants=("0.29.1")
 
 pkg_info="Package Config is a helper tool used when compiling applications and libraries. "
 
@@ -27,10 +27,10 @@ tools, for instance."
 
 pc_opts="configure force-static "
 
-pkg_reqs=""
-pkg_uses="coreutils"
+pkg_reqs="glib "
+pkg_uses="coreutils glib"
 
-pkg_cfg="--disable-maintainer-mode --disable-dependency-tracking --disable-dtrace" 
+#pkg_cfg="--disable-maintainer-mode --disable-dependency-tracking --disable-dtrace" 
 
 pkg_cflags=""
 pkg_ldflags=""

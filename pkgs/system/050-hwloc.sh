@@ -13,9 +13,10 @@ source "bldr.sh"
 pkg_ctry="system"
 pkg_name="hwloc"
 
-pkg_default="1.5"
-pkg_variants=("1.5")
+pkg_default="1.11.5"
+pkg_variants=("1.11.5")
 pkg_mirrors=("http://www.open-mpi.org/software/hwloc/v1.5/downloads")
+pkg_mirrors=("https://www.open-mpi.org/software/hwloc/v1.11/downloads")
 
 pkg_info="The Portable Hardware Locality (hwloc) software package provides a portable abstraction (across OS, versions, architectures, ...) of the hierarchical topology of modern architectures, including NUMA memory nodes, sockets, shared caches, cores and simultaneous multithreading."
 

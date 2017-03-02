@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="network"
 pkg_name="openssl"
 
-pkg_default="1.0.1r"
-pkg_variants=("1.0.1r")
+pkg_default="1.0.2k"
+pkg_variants=("1.0.2k")
 
 pkg_info="OpenSSL provides a Secure-Sockets Layer implementation (SSL v2/v3) and supports Transport Layer Security (TLS v1)."
 
@@ -25,7 +25,8 @@ as well as a full-strength general purpose cryptography library managed by a
 worldwide community of volunteers that use the Internet to communicate, plan, 
 and develop the OpenSSL toolkit and its related documentation."
 
-pkg_opts="configure skip-system-flags force-serial-build"
+#pkg_opts="configure skip-system-flags force-serial-build"
+pkg_opts="configure skip-system-flags"
 pkg_uses=""
 pkg_reqs=""
 pkg_cflags=""
@@ -48,7 +49,7 @@ do
      fi
 
      pkg_file="$pkg_name-$pkg_vers.tar.gz"
-     pkg_urls="http://www.openssl.org/source/$pkg_file"
+     pkg_urls="https://www.openssl.org/source/$pkg_file"
 
      bldr_register_pkg                 \
           --category    "$pkg_ctry"    \

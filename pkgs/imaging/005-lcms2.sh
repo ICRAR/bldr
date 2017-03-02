@@ -13,7 +13,7 @@ source "bldr.sh"
 pkg_ctry="imaging"
 pkg_name="lcms2"
 
-pkg_default="2.3"
+pkg_default="2.8"
 pkg_variants=("$pkg_default")
 
 pkg_info="The Little Color Management System implements fast transforms between ICC profiles."

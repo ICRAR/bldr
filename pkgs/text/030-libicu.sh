@@ -13,10 +13,10 @@ source "bldr.sh"
 pkg_ctry="text"
 pkg_name="libicu"
 
-pkg_default="49.1.2"
+pkg_default="58.2"
 pkg_variants=("$pkg_default")
-pkg_distribs=("icu4c-49_1_2-src.tgz")
-pkg_mirrors=("http://download.icu-project.org/files/icu4c/49.1.2")
+pkg_distribs=("icu4c-58_2-src.tgz")
+pkg_mirrors=("http://download.icu-project.org/files/icu4c/58.2")
 
 pkg_info="ICU is the premier library for software internationalization."
 
@@ -29,7 +29,7 @@ ICU is released under a nonrestrictive open source license that is suitable for 
 with both commercial software and with other open source or free software."
 
 pkg_opts="configure "
-pkg_opts+="force-serial-build "
+#pkg_opts+="force-serial-build "
 pkg_opts+="enable-static "
 pkg_opts+="enable-shared "
 

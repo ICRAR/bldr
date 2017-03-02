@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="findutils"
 
-pkg_default="4.4.2"
-pkg_variants=("4.4.2")
+pkg_default="4.6.0"
+pkg_variants=("4.4.2" "4.6.0")
 
 pkg_info="GNU Find Utilities is a package of several programs related to finding differences between files."
 

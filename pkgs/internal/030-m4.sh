@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="m4"
 
-pkg_default="1.4.17"
-pkg_variants=("1.4.17")
+pkg_default="1.4.18"
+pkg_variants=("1.4.18")
 
 pkg_info="GNU M4 is an implementation of the traditional Unix macro processor. "
 

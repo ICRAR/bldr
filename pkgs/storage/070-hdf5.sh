@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="storage"
 pkg_name="hdf5"
 
-pkg_default="1.8.9"
-pkg_variants=("1.6.10" "1.8.2" "1.8.9")
+pkg_default="1.8.17"
+pkg_variants=("1.6.10" "1.8.17")
 
 pkg_info="HDF5 is a unique technology suite that makes possible the management of extremely large and complex data collections."
 
@@ -77,8 +77,9 @@ hdf5_reqs="$pkg_reqs"
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_name="hdf5"
-    pkg_file="hdf5-$pkg_vers.tar.gz"
+    pkg_file="hdf5-$pkg_vers.tar.bz2"
     pkg_urls="http://www.hdfgroup.org/ftp/HDF5/releases/$pkg_name-$pkg_vers/src/$pkg_file"
+    pkg_urls="https://support.hdfgroup.org/ftp/HDF5/current18/src/hdf5-1.8.18.tar.bz2"
 
     #
     # hdf5 - standard
@@ -152,6 +153,7 @@ do
     #
     pkg_name="hdf5-threadsafe"
     pkg_cfg="$hdf5_cfg --enable-threadsafe "
+    pkg_cfg+="--enable-unsupported "
     pkg_reqs="$hdf5_reqs"      
 
     bldr_register_pkg              \
@@ -178,6 +180,7 @@ do
         pkg_name="hdf5-threadsafe-16"
         pkg_cfg="$hdf5_cfg --enable-threadsafe "
         pkg_cfg+="--with-default-api-version=v16 "
+        pkg_cfg+="--enable-unsupported "
         pkg_reqs="$hdf5_reqs"      
 
         bldr_register_pkg              \

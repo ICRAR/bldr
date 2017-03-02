@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="make"
 
-pkg_default="3.82"
-pkg_variants=("3.82")
+pkg_default="4.2.1"
+pkg_variants=("3.82" "4.2.1")
 
 pkg_info="GNU Make is a tool which controls the generation of executables and other non-source files of a program from the program's source files."
 

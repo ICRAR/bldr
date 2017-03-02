@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="gperf"
 
-pkg_default="3.0.4"
-pkg_variants=("3.0.4")
+pkg_default="3.1"
+pkg_variants=("3.1")
 
 pkg_info="GNU gperf is a perfect hash function generator."
 

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="typography"
 pkg_name="pango"
 
-pkg_default="1.30.1"
-pkg_variants=("1.30.1")
+pkg_default="1.40.3"
+pkg_variants=("1.40.3")
 
 pkg_info="Pango is a library for laying out and rendering of text, with an emphasis on internationalization."
 
@@ -62,6 +62,8 @@ pkg_reqs+="freetype "
 pkg_reqs+="fontconfig "
 pkg_reqs+="gettext "
 pkg_reqs+="glib "
+pkg_reqs+="cairo "
+pkg_reqs+="harfbuzz "
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
@@ -82,7 +84,14 @@ pkg_cfg="--disable-introspection"
 pkg_cflags=""
 pkg_cflags+=":-I$BLDR_GLIB_INCLUDE_PATH/glib-2.0"
 pkg_cflags+=":-I$BLDR_GLIB_INCLUDE_PATH/gio-unix-2.0"
+pkg_cflags+=":-I/opt/bldr/local/typography/freetype/default/include/freetype2"
+pkg_cflags+=":-I/opt/bldr/local/graphics/cairo/default/include/cairo"
 pkg_ldflags=""
+
+export FONTCONFIG_CFLAGS="-I/opt/bldr/local/typography/fontconfig/default/include"
+export FONTCONFIG_LIBS="-L/opt/bldr/local/typography/fontconfig/default/lib -lfontconfig"
+export CAIRO_CFLAGS="-I/opt/bldr/local/graphics/cairo/default/include/cairo"
+export CAIRO_LIBS="-L/opt/bldr/local/graphics/cairo/default/lib -lcairo"
 
 ####################################################################################################
 # register each pkg version with bldr
@@ -91,7 +100,7 @@ pkg_ldflags=""
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.xz"
-    pkg_urls="http://ftp.gnome.org/pub/GNOME/sources/$pkg_name/1.30/$pkg_file"
+    pkg_urls="http://ftp.gnome.org/pub/GNOME/sources/$pkg_name/1.40/$pkg_file"
 
     bldr_register_pkg                 \
          --category    "$pkg_ctry"    \

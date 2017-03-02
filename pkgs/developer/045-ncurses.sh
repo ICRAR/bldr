@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="ncurses"
 
-pkg_default="5.9"
-pkg_variants=("5.9")
+pkg_default="6.0"
+pkg_variants=("6.0")
 
 pkg_info="The Ncurses (new curses) library is a free software emulation of curses in System V Release 4.0, and more."
 

@@ -13,6 +13,9 @@ source "bldr.sh"
 pkg_ctry="system"
 pkg_name="papi"
 
+pkg_default="5.5.1"
+pkg_variants=("5.5.1")
+
 pkg_info="The Performance API (PAPI) project specifies a standard application programming interface (API) for accessing hardware performance counters available on most modern microprocessors."
 
 pkg_desc="The Performance API (PAPI) project specifies a standard application programming interface 
@@ -26,9 +29,6 @@ compiler optimization, debugging, benchmarking, monitoring and performance model
 it is hoped that this information will prove useful in the development of new compilation technology 
 as well as in steering architectural development towards alleviating commonly occurring bottlenecks 
 in high performance computing."
-
-pkg_default="4.4.0"
-pkg_variants=("4.4.0" "5.0.1")
 
 pkg_opts="configure "
 pkg_opts+="force-serial-build "
@@ -54,7 +54,7 @@ fi
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://icl.cs.utk.edu/projects/papi/downloads/$pkg_file"
+    pkg_urls="http://icl.utk.edu/projects/papi/downloads/$pkg_file"
 
     bldr_register_pkg                  \
           --category    "$pkg_ctry"    \

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="graphics"
 pkg_name="cairo"
 
-pkg_default="1.12.2"
-pkg_variants=("1.12.2")
+pkg_default="1.14.8"
+pkg_variants=("1.14.8")
 
 pkg_info="Cairo is a 2D graphics library with support for multiple output devices."
 
@@ -39,7 +39,9 @@ Cairo is free software and is available to be redistributed and/or modified
 under the terms of either the GNU Lesser General Public License (LGPL) version 
 2.1 or the Mozilla Public License (MPL) version 1.1 at your option."
 
-pkg_opts="configure force-bootstrap force-static"
+#pkg_opts="configure force-bootstrap force-static"
+#pkg_opts="configure force-static"
+pkg_opts="configure "
 
 pkg_reqs="zlib "
 pkg_reqs+="bzip2 "
@@ -53,7 +55,8 @@ pkg_reqs+="glib "
 pkg_reqs+="libpng "
 pkg_reqs+="freetype "
 pkg_reqs+="fontconfig "
-pkg_reqs+="pango "
+#pkg_reqs+="pango "
+pkg_reqs+="pkg-config "
 pkg_reqs+="pixman "
 pkg_reqs+="poppler "
 pkg_uses="$pkg_reqs"
@@ -73,20 +76,25 @@ bldr_satisfy_pkg                    \
 ####################################################################################################
 
 pkg_cfg_path=""
-pkg_cflags=""
+pkg_cflags="-I/opt/bldr/local/graphics/pixman/default/include/pixman-1 -I/opt/bldr/local/typography/freetype/default/include/freetype2"
 
 pkg_ldflags="\"$BLDR_ZLIB_LIB_PATH/libz.a\" "
 pkg_ldflags+="-L\"$BLDR_BZIP2_LIB_PATH\" -lbz2 "
 pkg_ldflags+="-L\"$BLDR_LIBPNG_LIB_PATH\" -lpng "
+pkg_ldflags+=" -L/opt/bldr/local/graphics/pixman/default/lib -lpixman-1"
+
+export pixman_LIBS="-L/opt/bldr/local/graphics/pixman/default/lib -lpixman-1 /opt/bldr/local/graphics/pixman/0.34.0/lib/libpixman-1.la"
 
 pkg_cfg="--disable-introspection "
+pkg_cfg+=" --enable-ps=no "
 if [[ $BLDR_SYSTEM_IS_OSX == true ]]; then
-     pkg_cfg+="--disable-xlib --enable-quartz --enable-quartz-image --without-x "
+     pkg_cfg+=" --disable-xlib --enable-quartz --enable-quartz-image --without-x "
 fi
 
 if [[ $BLDR_SYSTEM_IS_LINUX == true ]] 
 then
-     pkg_cflags+="-fPIC "
+     #pkg_cfg+=" --disable-xlib "
+     pkg_cflags+=" -fPIC "
 fi
 
 ####################################################################################################

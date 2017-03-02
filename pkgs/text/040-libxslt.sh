@@ -25,8 +25,8 @@ People can either embed the library in their application or use xsltproc the
 command line processing tool. This library is free software and can be reused 
 in commercial applications (see the docs)."
 
-pkg_default="1.1.26"
-pkg_variants=("1.1.26")
+pkg_default="1.1.29"
+pkg_variants=("1.1.29")
 
 pkg_opts="configure "
 pkg_opts+="enable-static "

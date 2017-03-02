@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="tracing"
 pkg_name="valgrind"
 
-pkg_default="3.7.0"
-pkg_variants=("3.7.0")
+pkg_default="3.12.0"
+pkg_variants=("3.12.0")
 
 pkg_info="Valgrind is an instrumentation framework for building dynamic analysis tools."
 

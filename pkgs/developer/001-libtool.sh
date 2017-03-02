@@ -25,7 +25,8 @@ Libtool hides the complexity of using shared libraries behind a consistent, port
 To use libtool, add the new generic library building commands to your Makefile, Makefile.in, 
 or Makefile.am. See the documentation for details."
 
-pkg_opts="configure force-static"
+#pkg_opts="configure force-static"
+pkg_opts="configure"
 pkg_uses=" "
 pkg_reqs="$pkg_uses"
 

@@ -13,11 +13,11 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="cmake"
 
-pkg_default="2.8.9"
-pkg_variants=("2.6.4" "2.8.9" "trunk")
-pkg_vers_urls=("http://www.cmake.org/files/v2.6" 
-               "http://www.cmake.org/files/v2.8"
-               "git://cmake.org/cmake.git")
+pkg_default="3.7.2"
+pkg_variants=("2.8.12" "3.7.2")
+pkg_vers_urls=("http://www.cmake.org/files/v2.8" 
+               "http://www.cmake.org/files/v3.7")
+               #"git://cmake.org/cmake.git")
 
 pkg_info="CMake is a family of tools designed to build, test and package software."
 

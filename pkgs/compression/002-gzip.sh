@@ -12,8 +12,8 @@ source "bldr.sh"
 
 pkg_ctry="compression"
 pkg_name="gzip"
-pkg_default="1.5"
-pkg_variants=("1.5")
+pkg_default="1.8"
+pkg_variants=("1.8")
 
 pkg_info="GNU zip is a compression utility designed to be a replacement for compress."
 

@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="typography"
 pkg_name="fontconfig"
 
-pkg_default="2.10.1"
-pkg_variants=("2.10.1")
+pkg_default="2.12.1"
+pkg_variants=("2.12.1")
 
 pkg_info="FontConfig is a library for configuring and customizing font access. "
 
@@ -25,8 +25,9 @@ Fontconfig contains two essential modules, the configuration module which builds
 internal configuration from XML files and the matching module which accepts font 
 patterns and returns the nearest matching font."
 
-pkg_opts="configure"
+pkg_opts="configure "
 pkg_cfg="--disable-docs"
+pkg_cfg+=" --enable-static"
 
 pkg_reqs="zlib "
 pkg_reqs+="libicu "
@@ -35,7 +36,21 @@ pkg_reqs+="libxml2 "
 pkg_reqs+="freetype "
 pkg_uses="$pkg_reqs"
 
-pkg_cflags=""
+####################################################################################################
+# satisfy pkg dependencies and load their environment settings
+####################################################################################################
+
+bldr_satisfy_pkg                 \
+    --category    "$pkg_ctry"    \
+    --name        "$pkg_name"    \
+    --version     "$pkg_default" \
+    --requires    "$pkg_reqs"    \
+    --uses        "$pkg_uses"    \
+    --options     "$pkg_opts"
+
+####################################################################################################
+
+pkg_cflags="-I$BLDR_FREETYPE_INCLUDE_PATH/freetype2"
 pkg_ldflags=""
 pkg_patch=""
 
@@ -58,6 +73,7 @@ for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
     pkg_urls="http://www.freedesktop.org/software/$pkg_name/release/$pkg_file"
+    export LIBXML2_CFLAGS="-I/opt/bldr/local/text/libxml2/default/include"
 
     bldr_register_pkg                 \
          --category    "$pkg_ctry"    \

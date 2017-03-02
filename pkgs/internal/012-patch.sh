@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="internal"
 pkg_name="patch"
 
-pkg_default="2.6.1"
-pkg_variants=("2.6.1")
+pkg_default="2.7.5"
+pkg_variants=("2.7.5")
 
 pkg_info="GNU Patch takes a patch file containing a difference listing produced by the diff program and applies those differences to one or more original files, producing patched versions."
 

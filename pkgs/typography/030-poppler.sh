@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="typography"
 pkg_name="poppler"
 
-pkg_default="0.20.2"
-pkg_variants=("0.20.2")
+pkg_default="0.51.0"
+pkg_variants=("0.51.0")
 
 pkg_info="Poppler is a PDF rendering library based on the xpdf-3.0 code base."
 
@@ -32,11 +32,13 @@ pkg_reqs+="zlib "
 pkg_reqs+="libicu "
 pkg_reqs+="libxml2 "
 pkg_reqs+="lcms2 "
-pkg_reqs+="libpng "
+pkg_reqs+="libpng/1.2.57 "
 pkg_reqs+="libjpeg "
+pkg_reqs+="freetype "
+pkg_reqs+="fontconfig "
 pkg_uses=$pkg_reqs
 
-pkg_cflags=""
+pkg_cflags="-I/opt/bldr/local/typography/freetype/default/include/freetype2"
 pkg_ldflags=""
 
 ####################################################################################################
@@ -45,7 +47,7 @@ pkg_ldflags=""
 
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_file="$pkg_name-$pkg_vers.tar.xz"
     pkg_urls="http://poppler.freedesktop.org/$pkg_file"
 
     bldr_register_pkg                 \

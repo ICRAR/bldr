@@ -19,7 +19,7 @@ pkg_desc="Expat is an XML parser library written in C. It is a stream-oriented p
 in which an application registers handlers for things the parser might find in the 
 XML document (like start tags). "
 
-pkg_default="2.1.0"
+pkg_default="2.2.0"
 pkg_variants=("$pkg_default")
 
 pkg_opts="configure "
@@ -41,8 +41,9 @@ pkg_patch=""
 
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://prdownloads.sourceforge.net/$pkg_name/$pkg_vers/$pkg_file?download"
+    pkg_file="$pkg_name-$pkg_vers.tar.bz2"
+    #pkg_urls="http://prdownloads.sourceforge.net/$pkg_name/$pkg_vers/$pkg_file?download"
+    pkg_urls="https://nchc.dl.sourceforge.net/project/expat/expat/$pkg_vers/$pkg_file"
 
     bldr_register_pkg                \
         --category    "$pkg_ctry"    \

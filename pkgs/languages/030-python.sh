@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="languages"
 pkg_name="python"
 
-pkg_default="2.7.3"
-pkg_variants=("2.7.3" "3.2.3")
+pkg_default="2.7.13"
+pkg_variants=("2.7.13" "3.6.0")
 
 pkg_info="Python is a programming language that lets you work more quickly and integrate your systems more effectively."
 
@@ -46,7 +46,7 @@ pkg_cfg=""
 
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="Python-$pkg_vers.tar.bz2"
+    pkg_file="Python-$pkg_vers.tar.xz"
     pkg_urls="http://www.python.org/ftp/python/$pkg_vers/$pkg_file"
 
     bldr_register_pkg                  \

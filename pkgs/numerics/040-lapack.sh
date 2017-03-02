@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="numerics"
 pkg_name="lapack"
 
-pkg_default="3.4.1"
-pkg_variants=("3.4.1")
+pkg_default="3.7.0"
+pkg_variants=("3.7.0")
 
 pkg_info="LAPACK is written in Fortran 90 and provides routines for solving systems of simultaneous linear equations, least-squares solutions of linear systems of equations, eigenvalue problems, and singular value problems."
 
@@ -29,7 +29,7 @@ real and complex matrices, in both single and double precision."
 
 pkg_opts="cmake"
 pkg_reqs="gfortran python"
-pkg_uses="$pkg_reqs"
+pkg_uses="$pkg_reqs cmake"
 
 ####################################################################################################
 # satisfy pkg dependencies and load their environment settings

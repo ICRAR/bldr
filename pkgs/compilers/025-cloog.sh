@@ -14,7 +14,7 @@ pkg_ctry="compilers"
 pkg_name="cloog"
 
 pkg_default="0.18.4"
-pkg_variants=("0.18.4" "0.17.0")
+pkg_variants=("0.17.0" "0.18.4")
 
 pkg_info="CLooG is a free software and library to generate code for scanning Z-polyhedra."
 
@@ -71,7 +71,8 @@ pkg_patch=""
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://www.bastoul.net/cloog/pages/download/count.php3?url=./$pkg_file"
+    #pkg_urls="http://www.bastoul.net/cloog/pages/download/count.php3?url=./$pkg_file"
+    pkg_urls="http://www.bastoul.net/cloog/pages/download/$pkg_file"
 
     bldr_register_pkg                \
         --category    "$pkg_ctry"    \

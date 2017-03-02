@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="text"
 pkg_name="docbook-xsl"
 
-pkg_default="1.77.1"
-pkg_variants=("1.77.1")
+pkg_default="1.79.1"
+pkg_variants=("1.79.1")
 
 pkg_info="DocBook is an XML vocabulary that lets you create documents in a presentation-neutral form that captures the logical structure of your content."
 

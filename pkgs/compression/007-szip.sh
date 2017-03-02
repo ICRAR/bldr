@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="compression"
 pkg_name="szip"
 
-pkg_default="2.1"
-pkg_variants=("2.1")
+pkg_default="2.1.1"
+pkg_variants=("2.1.1")
 
 pkg_info="SZIP is an implementation of the extended-Rice lossless compression algorithm."
 

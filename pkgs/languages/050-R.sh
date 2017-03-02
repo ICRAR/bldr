@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="languages"
 pkg_name="R"
 
-pkg_default="2.15.1"
-pkg_variants=("2.15.1")
+pkg_default="3.3.2"
+pkg_variants=("3.3.2")
 
 pkg_info="R is a free software environment for statistical computing and graphics."
 
@@ -47,6 +47,7 @@ pkg_opts+="enable-static "
 pkg_opts+="enable-shared "
 
 pkg_reqs+="zlib "
+pkg_reqs+="xz "
 pkg_reqs+="bzip2 "
 pkg_reqs+="tcl "
 pkg_reqs+="tk "
@@ -54,12 +55,20 @@ pkg_reqs+="pcre "
 pkg_reqs+="gettext "
 pkg_reqs+="libiconv "
 pkg_reqs+="libicu "
-pkg_reqs+="libpng "
+pkg_reqs+="libpng/1.2.57 "
 pkg_reqs+="libjpeg "
 pkg_reqs+="gsl "
 pkg_reqs+="cairo "
+pkg_reqs+="pango "
 pkg_reqs+="gfortran "
 pkg_reqs+="lapack "
+pkg_reqs+="glib "
+pkg_reqs+="curl "
+pkg_reqs+="ncurses "
+pkg_reqs+="pkg-config "
+pkg_reqs+="fontconfig "
+pkg_reqs+="harfbuzz "
+pkg_reqs+="freetype "
 pkg_uses="$pkg_reqs"
 
 ####################################################################################################
@@ -76,22 +85,32 @@ bldr_satisfy_pkg                 \
 
 ####################################################################################################
 
-pkg_cfg="--with-system-zlib "
-pkg_cfg+="--with-system-bzlib "
-pkg_cfg+="--with-system-xz "
-pkg_cfg+="--with-system-pcre "
-pkg_cfg+="--with-jpeglib "
-pkg_cfg+="--with-libpng "
-pkg_cfg+="--with-blas "
-pkg_cfg+="--with-lapack "
-pkg_cfg+="--with-ICU "
-pkg_cfg+="--with-tcltk "
-pkg_cfg+="--disable-R-framework "
-pkg_cfg+="--without-aqua "
-pkg_cfg+="--with-libintl-prefix=\"$BLDR_GETTEXT_BASE_PATH\" "
-pkg_cfg+="--with-cairo=\"$BLDR_CAIRO_BASE_PATH\" "
-pkg_cfg+="--with-tcl-config=\"$BLDR_TCL_BASE_PATH\" "
-pkg_cfg+="--with-tk-config=\"$BLDR_TK_BASE_PATH\" "
+#pkg_cfg="--with-zlib=\"$BLDR_ZLIB_BASE_PATH\""
+#pkg_cfg=+" --with-system-bzlib"
+#pkg_cfg+=" --with-system-xz"
+#pkg_cfg+=" --with-system-pcre"
+pkg_cfg=" --with-jpeglib"
+pkg_cfg+=" --with-libpng"
+pkg_cfg+=" --with-blas"
+pkg_cfg+=" --with-lapack"
+pkg_cfg+=" --with-ICU"
+pkg_cfg+=" --with-tcltk"
+pkg_cfg+=" --disable-R-framework"
+pkg_cfg+=" --without-aqua"
+pkg_cfg+=" --with-libintl-prefix=\"$BLDR_GETTEXT_BASE_PATH\""
+pkg_cfg+=" --with-cairo=\"$BLDR_CAIRO_BASE_PATH\""
+pkg_cfg+=" --with-tcl-config=\"$BLDR_TCL_BASE_PATH/lib/tclConfig.sh\""
+pkg_cfg+=" --with-tk-config=\"$BLDR_TK_BASE_PATH/lib/tkConfig.sh\""
+
+pkg_cflags+=" -std=c99 -I$BLDR_PANGO_BASE_PATH/include/pango-1.0"
+pkg_cflags+=" -I$BLDR_GLIB_BASE_PATH/include/glib-2.0"
+pkg_cflags+=" -I$BLDR_CAIRO_BASE_PATH/include/cairo"
+#pkg_ldflags+=" -lcurl"
+pkg_ldflags+=" -L$BLDR_CAIRO_BASE_PATH/lib -lcairo"
+pkg_ldflags+=" -L$BLDR_PANGO_BASE_PATH/lib -lpango-1.0 -lpangocairo-1.0"
+pkg_ldflags+=" -L$BLDR_HARFBUZZ_BASE_PATH/lib -lharfbuzz"
+pkg_ldflags+=" -L$BLDR_FREETYPE_BASE_PATH/lib -lfreetype"
+pkg_ldflags+=" -L/usr/local/gcc/lib64 -lstdc++"
 
 ####################################################################################################
 # build and install pkg as local module
@@ -100,7 +119,7 @@ pkg_cfg+="--with-tk-config=\"$BLDR_TK_BASE_PATH\" "
 for pkg_vers in ${pkg_variants[@]}
 do
     pkg_file="$pkg_name-$pkg_vers.tar.gz"
-    pkg_urls="http://cran.ms.unimelb.edu.au/src/base/R-2/$pkg_file"
+    pkg_urls="http://cran.ms.unimelb.edu.au/src/base/R-3/$pkg_file"
 
     bldr_register_pkg                  \
           --category    "$pkg_ctry"    \

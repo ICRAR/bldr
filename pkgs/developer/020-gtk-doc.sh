@@ -13,8 +13,8 @@ source "bldr.sh"
 pkg_ctry="developer"
 pkg_name="gtk-doc"
 
-pkg_default="1.18"
-pkg_variants=("1.18")
+pkg_default="1.25"
+pkg_variants=("1.25")
 
 pkg_info="GTK-Doc is a project which was started to generate API documentation from comments added to C code."
 
@@ -25,6 +25,8 @@ libraries, but it can also be used to document application code."
 pkg_opts="configure enable-static enable-shared"
 pkg_reqs=""
 pkg_reqs+="libtool "
+pkg_reqs+="perl "
+pkg_reqs+="itstool "
 pkg_reqs+="zlib "
 pkg_reqs+="libxslt "
 pkg_reqs+="libxml2 "
@@ -58,7 +60,7 @@ pkg_cfg="--with-xml-catalog=$XML_CATALOG_FILES"
 
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="$pkg_name-$pkg_vers.tar.bz2"
+    pkg_file="$pkg_name-$pkg_vers.tar.xz"
     pkg_urls="http://ftp.gnome.org/pub/GNOME/sources/$pkg_name/$pkg_vers/$pkg_file"
 
     bldr_register_pkg                 \

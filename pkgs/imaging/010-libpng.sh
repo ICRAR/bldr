@@ -13,8 +13,9 @@ source "bldr.sh"
 pkg_ctry="imaging"
 pkg_name="libpng"
 
-pkg_default="1.5.12"
-pkg_variants=("1.2.50" "1.5.12")
+pkg_default="1.6.28"
+#pkg_variants=("1.2.50" "1.5.12")
+pkg_variants=("1.2.57" "1.6.28")
 
 pkg_info="PNG is an open, extensible image format with lossless compression."
 
@@ -59,8 +60,9 @@ pkg_ldflags="-L\"$BLDR_ZLIB_LIB_PATH\" -lz"
 
 for pkg_vers in ${pkg_variants[@]}
 do
-    pkg_file="$pkg_name-$pkg_vers.tar.gz"
+    pkg_file="$pkg_name-$pkg_vers.tar.xz"
     pkg_urls="http://prdownloads.sourceforge.net/libpng/$pkg_file?download"
+    #pkg_urls="https://nchc.dl.sourceforge.net/project/libpng/libpng16/$pkg_vers/$pkg_file"
 
     bldr_register_pkg                 \
          --category    "$pkg_ctry"    \
